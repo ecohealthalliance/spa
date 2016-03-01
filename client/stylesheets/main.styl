@@ -1,0 +1,523 @@
+@import 'variables.import'
+@import 'mixins.import'
+
+@import 'globals.import'
+
+@import 'sidebar.import'
+
+body
+html
+.map
+  height 100%
+  width 100%
+
+body
+  primaryFont()
+
+.bootstrap-datetimepicker-widget.dropdown-menu
+  position fixed
+  font-size small
+
+.element-details-container
+  position absolute
+  bottom 10px
+  right 20px
+  min-width 300px
+  border-radius 4px
+  border 5px solid $blue-transparent
+  font-family $fonts
+  .tab-content
+    padding 10px
+    background $whiteBG
+  .tab-pane
+    min-height 140px
+    .row
+      margin-bottom 3px
+
+.element-details-nav
+  position relative
+  background $whiteBG
+  border-bottom 1px solid rgba(226, 226, 226, 1)
+  > li
+    width auto
+    float left
+    border-right 1px solid #E2E2E2
+    &:last-of-type
+      border-right 0
+    > a
+      color $blue
+  .active
+    background #EFEFEF
+    font-weight bold
+
+.element-details-close
+  line-height inherit
+  position absolute
+  right 10px
+  top 50%
+  transform translate(0,-50%)
+
+.marker-icon
+  cursor pointer
+
+.tab-content
+  overflow-x hidden
+  overflow-y auto
+
+#filter
+  width 100%
+  .tab-content
+    min-height 300px
+
+.nav-tabs > li.active > a
+.nav-tabs > li.active > a:hover
+.nav-tabs > li.active > a:focus
+  background-color $blue
+  color white
+
+
+.filter-tab-pane
+  padding 20px
+  .filter-group
+    margin-right 10px
+    margin-left 10px
+    margin-bottom 25px
+
+.filter-tabs
+  flexTabs(none, $l-gray, $ll-gray)
+
+.tableDivider
+  height 3px
+  background-color $blue
+  border-left solid #ddd 1px
+
+
+.date > span.input-group-addon
+  background-color #ddd
+
+#filterContainer
+  font-size small
+  background-color white
+  padding 0px
+  border-radius 5px
+  filter-container-width()
+
+#filterLoading
+  display none
+
+#filter
+  // font-size small
+  margin-top 0
+  filter-container-width()
+
+#sidebar-layer
+  layer-container-width()
+  box-shadow 0 0px 0px rgba(0,0,0,0)
+
+.advFilHdr
+  text-align center
+  background-color lighten($m-gray,10%)
+  color #444
+  padding .3em
+  margin-bottom 0
+
+.filter-heading
+  font-size 1.2em
+  font-weight bold
+  margin 0
+  color #333
+
+.filter-header
+  background-color #eee
+  padding 5px
+  min-width initial
+  border-radius 2px
+
+.filter-first-row
+  margin-bottom 5px
+
+.filter-title
+  display inline
+  vertical-align middle
+  font-weight bold
+  margin 0 0 0 5px
+
+.filter-label
+  font-size 1.1em
+  font-weight bold
+
+.filter-group
+  white-space nowrap
+  padding 2px
+
+.filter-footer
+  @extend .sidebar-footer
+  position relative
+  bottom 0
+  height 98px
+  width $sidebar-width
+  padding-top 10px
+  padding-bottom 20px
+  font-size .8em
+
+.dow
+  padding 0
+
+.applyFilter
+	padding 5px
+
+.hamburger
+  float left
+  margin 2px
+
+.row-status-bar
+  margin 15px 5px 0 5px
+
+.col-status-bar
+  padding 0
+  > div
+    padding-right 0
+    padding-top 5px
+
+.status-bar-text
+  padding-right 0
+  padding-left 0
+  color #333
+  width 80%
+  font-style italic
+  text-align right
+
+.status-bar-val
+  padding-left 2px
+  width 20%
+
+.filter-status
+  position relative
+  margin-right 5px
+  left -2px
+  bottom 8px
+  vertical-align middle
+  color darkorange
+
+.filter-status-message
+  position relative
+  left -2px
+  bottom 8px
+  font-size smaller
+  font-weight bold
+  color #333
+  margin 0 3px 0 3px
+
+.spinner
+  position absolute
+  right 15px
+  top 17px
+  font-size 16px
+  color #666
+  z-index 2000
+
+.leaflet-container
+  background-color #CDD2D4
+
+.leaflet-top.leaflet-left
+  z-index 1004
+.leaflet-top.leaflet-right
+  z-index 1003
+.leaflet-bottom.leaflet-left
+  z-index 1002
+.leaflet-bottom.leaflet-right
+  z-index 1001
+
+#mapLegendPanel
+	width 180px
+
+p.intro
+	line-height 1.5
+	margin 5px 0 35px 0
+	font-size larger
+
+#container
+	width 100%
+	height 100%
+
+.title
+	margin-top 0
+	margin-bottom 10px
+	text-align center
+
+.notice
+	margin 10px 0 5px 0
+	line-height 1.5
+	text-align center
+
+.info
+	padding 6px 8px
+	font 14px/16px fonts
+	background white
+	background rgba(white, 1)
+	box-shadow 0 0 15px rgba(black, 0.2)
+	border-radius 5px
+
+@media all and (max-width: 480px)
+	/* styles for iPhone/Android landscape (and really narrow browser windows) */
+	.notice
+		font-size 11px
+
+@media all and (max-width: 320px)
+	/* styles for iPhone/Android portrait */
+	.notice
+		font-size 11px
+
+@media all and (max-width: 240px)
+	/* styles for smaller devices */
+	.notice
+		font-size 11px
+
+.leaflet-control-zoom
+  clear none // allows horizontal stacking with filter
+
+.searchBar
+  position relative
+  width 100%
+  border-left 0
+  border-right 0
+  background $ll-gray
+  border-top 4px solid $blue
+  border-bottom 1px solid $blue
+  font-size 1em
+
+#searchIcon
+  verticallyCenter()
+  left 10px
+  font-size 1.4em
+  color $blue
+
+.twitter-typeahead
+  position static !important // Overides typeahead's inline styling
+
+.tt-dropdown-menu
+  border-top-left-radius 0
+  border-top-right-radius 0
+  border 0
+  height 635px
+  overflow-y auto
+  overflow-x hidden
+
+.pull-middle
+  display table-cell
+  vertical-align middle
+  float none
+
+.pager
+  display inline
+
+.slider.slider-horizontal
+  width 250px
+  cursor pointer
+
+.slider-wrapper
+  margin-bottom 50px
+
+.slider
+  &.slider-horizontal
+    .slider-handle
+      margin-left -7px
+      margin-top -6px
+
+.slider-handle
+  width 22px
+  height 22px
+  border 2px solid white
+  background lighten($blue, 10%)
+  transition background .1s
+  &:focus
+    outline 0
+    border-color darken($blue, 30%)
+    background darken($blue, 10%)
+  &:active
+    background $green
+    border-color white
+
+.min-slider-handle
+  opacity 1
+
+.max-slider-handle
+  opacity 1
+
+.slider-track
+  background-image: linear-gradient(to bottom, $ll-gray 0%, $l-gray 100%)
+
+.slider-selection
+  background-image none
+  background-color rgba(51, 122, 183, 0.25)
+
+.tt-suggestion
+  position relative
+  padding 5px 10px 5px 20%
+  border-bottom 1px solid #f9f9f9
+  &:last-child
+    border-bottom 0
+
+.tt-suggestion
+.tt-suggestion
+  &.tt-cursor
+  &.tt-is-under-cursor
+    background lighten(#DDD, 10%)
+    &.airport-name
+      color #555
+  strong
+    color #000
+
+#title-text
+  float right
+  text-align left
+  margin-right 95px
+  font-size 70px
+  font-weight bold
+
+#sidebar-question-tab
+  position absolute
+  bottom 0px
+
+#sidebar-search-tab
+  position absolute
+  top 140px
+
+#sidebar-slider-tab
+  position absolute
+  top 200px
+
+#sidebar-layer-tab
+  position absolute
+  top 260px
+
+.tt-input
+  height 30px
+  font-weight 20px
+
+.tokenfield
+  border-radius 0
+  box-shadow none
+  &.form-control
+    &.input-sm
+      padding-left 40px
+      border 0
+
+.input-group-sm .token
+.tokenfield.input-sm .token
+  min-height 26px
+  font-size 16px
+  margin-top 2px
+  margin-bottom 0
+
+ .slider-range-labels
+   margin-top 3px
+
+.sliderValIndicator
+.sliderRangeIndicatorRight
+.sliderRangeIndicatorLeft
+  font-size .9em
+  color darken($d-gray, 20%)
+
+.sliderValIndicator
+  text-align right
+  font-weight 600
+
+.sliderRangeIndicatorRight
+.sliderRangeIndicatorLeft
+  margin-top 3px
+  width 50%
+  word-wrap break-word
+
+.sliderRangeIndicatorRight
+  text-align right
+
+.advancedFilterRow
+  padding 10px 15px 30px 10px
+
+.sidebar-tabs > li:hover
+  color #333
+
+.limit
+  > div
+    display inline-block
+    vertical-align middle
+
+.limitSearchTitle
+  padding 0
+  margin 0px 15px 0px 15px
+
+.limitInput
+  width 75px
+  padding-left 0
+  padding-right 10px
+
+.circle
+  float right
+  width 20px
+  height 20px
+  border-radius 50%
+
+.leaflet-control-layers-base
+.leaflet-control-layers-overlays
+  padding-left 20px
+  padding-right 20px
+
+.airport-footer
+  position absolute
+  bottom 0px
+
+.sidebar-tabs > li:hover
+  color #333
+
+.sidebar-highlight
+  color #333
+
+#sidebar-draw-rectangle-tool
+  opacity .5
+  position absolute
+  width 50px
+  height 60px
+  bottom 75px
+  padding 15px 9px 0px 9px
+  cursor pointer
+  cursor hand
+
+#sidebar-draw-rectangle-tool:hover
+  opacity .75
+
+#sidebar-draw-rectangle-tool.sidebar-highlight
+  opacity 1
+
+.action-menu
+  display none
+  list-style none
+  position absolute
+  bottom 90px
+  right -105px
+  margin-top 5px
+  margin-left 5px
+  padding 0
+  white-space nowrap
+
+.action-menu li
+  display inline-block
+  margin-left 2px
+
+.action-menu div:hover
+  opacity .50
+
+.action-menu-btn
+  background-color $blue
+  color white
+
+.action-menu-btn-selected
+  background-color #333
+  opacity .75
+
+.action-menu span
+  font-size smaller
+
+.pager li > a, .pager li > span
+  padding 5px 5px
+  border-radius 8px
