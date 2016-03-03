@@ -1,14 +1,25 @@
 Template.blindspotMap.onCreated ->
   Meteor.subscribe("blindspots")
+  @startYear = new ReactiveVar(1999)
+  @endYear = new ReactiveVar(2000)
   @geoJsonFeatures = new ReactiveVar([])
   $.getJSON("world.geo.json")
     .then (geoJsonData)=>
       @geoJsonFeatures.set(geoJsonData.features)
     .fail (e)->
       console.log e
+  @minYear = new ReactiveVar(1994)
+  @maxYear = new ReactiveVar(2015)
+  Blindspots.find().observeChanges(
+    added: (id, fields)=>
+      if fields.year < @minYear.get()
+        @minYear.set(fields.year)
+      else if fields.year > @maxYear.get()
+        @maxYear.set(fields.year)
+  )
 Template.blindspotMap.onRendered ->
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
-  @lMap = L.map("blindspot-map").setView([49.25044, -123.137], 5)
+  @lMap = L.map("blindspot-map").setView([49.25044, -123.137], 4)
   layer = L.tileLayer('//cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
     attribution: """Map tiles by <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>,
     under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
@@ -31,13 +42,15 @@ Template.blindspotMap.onRendered ->
     # If the value exceeds one the last stop is used.
     ramp = chroma.scale(["#3182bd", "#deebf7"]).colors(10)
     ramp[Math.floor(10 * Math.max(0, Math.min(val, 0.99)))]
-  style = (feature)->
+  style = (feature)=>
     fillColor: getColor(
       Math.log(
-        1 + 20000 * feature.properties.mentions / feature.properties.population
+        1 + 1000000 * feature.properties.mentions / (
+          (@endYear.get() - @startYear.get()) * feature.properties.population
+        )
       )
     )
-    weight: 2
+    weight: 1
     opacity: 1
     color: 'white'
     dashArray: '3'
@@ -76,18 +89,16 @@ Template.blindspotMap.onRendered ->
   updateMap = _.throttle((geoJsonFeatures, blindspots)=>
     totalMentionsByCountry = {}
     populationByCountry = {}
-    console.log Blindspots.find().count()
     blindspots.map (countryInYear)->
       if countryInYear.ISO not of totalMentionsByCountry
         totalMentionsByCountry[countryInYear.ISO] = 0
       totalMentionsByCountry[countryInYear.ISO] += countryInYear.mentions
       populationByCountry[countryInYear.ISO] = countryInYear.Population
     processedFeatures = geoJsonFeatures.map (country)->
-      result = EJSON.clone(country)
       # TODO: France and Norway ISO_A2 codes don't seem to match the codes from geonames.org
-      result.properties.mentions = totalMentionsByCountry[country.properties.ISO_A2]
-      result.properties.population = populationByCountry[country.properties.ISO_A2]
-      result
+      country.properties.mentions = totalMentionsByCountry[country.properties.ISO_A2]
+      country.properties.population = populationByCountry[country.properties.ISO_A2]
+      country
     if @geoJsonLayer
       @lMap.removeLayer(@geoJsonLayer)
     @geoJsonLayer = L.geoJson({
@@ -103,9 +114,34 @@ Template.blindspotMap.onRendered ->
     }).addTo(@lMap)
   , 10000)
   @autorun =>
-    updateMap(@geoJsonFeatures.get(), Blindspots.find().fetch())
+    updateMap(@geoJsonFeatures.get(), Blindspots.find(
+      $and: [
+        {
+          year:
+            $gte: @startYear.get()
+        }
+        {
+          year:
+            $lte: @endYear.get()
+        }
+      ]
+    ).fetch())
+Template.blindspotMap.helpers
+  minYear: ->
+    Template.instance().minYear
+  maxYear: ->
+    Template.instance().maxYear
+  startYear: ->
+    Template.instance().startYear.get()
+  endYear: ->
+    Template.instance().endYear.get()
 Template.blindspotMap.events
   'click #sidebar-plus-button': (event, instance) ->
     instance.lMap.zoomIn()
   'click #sidebar-minus-button': (event, instance) ->
     instance.lMap.zoomOut()
+  "update #slider": _.debounce((evt, instance)->
+    yearRange = $(evt.target)[0].noUiSlider.get()
+    instance.startYear.set(parseInt(yearRange[0]))
+    instance.endYear.set(parseInt(yearRange[1]))
+  , 200)

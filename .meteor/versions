@@ -13,6 +13,7 @@ caching-html-compiler@1.0.2
 callback-hook@1.0.4
 check@1.1.0
 coffeescript@1.0.11
+cosmos:browserify@0.8.4
 ddp@1.2.2
 ddp-client@1.2.1
 ddp-common@1.2.2
@@ -21,6 +22,7 @@ deps@1.0.9
 diff-sequence@1.0.1
 ecmascript@0.1.6
 ecmascript-runtime@0.2.6
+eha:slider@0.0.1
 ejson@1.0.7
 es5-shim@4.1.14
 fastclick@1.0.7
@@ -37,6 +39,7 @@ jquery@1.11.4
 launch-screen@1.0.4
 livedata@1.0.15
 logging@1.0.8
+markoshust:nouislider@8.2.1
 meteor@1.1.10
 meteor-base@1.0.1
 minifiers@1.1.7

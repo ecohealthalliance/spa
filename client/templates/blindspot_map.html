@@ -1,4 +1,25 @@
 <template name="blindspotMap">
   <div id="blindspot-map" class="map"></div>
-  {{> mapSidebar}}
+  <div id="sidebar" class="sidebar sidebar-left sidebar-main">
+      <!-- Nav tabs -->
+      <ul class="sidebar-tabs">
+          <li id="sidebar-collapse-tab"><a href="#sidebar-search-and-advanced-filter" role="tab"><i class="fa fa-chevron-circle-left fa-white"></i></a></li>
+          <button id="sidebar-plus-button" class="sidebar-zoom-in fa fa-plus btn btn-sm"></button>
+          <button id="sidebar-minus-button" class="sidebar-zoom-out fa fa-minus btn btn-sm"></button>
+      </ul>
+      <!-- Tab panes -->
+      <div class="sidebar-content">
+          <h1>Surveillance Paucity Analysis</h1>
+          <p>
+              This map shows the number of mentions per capita of each country on ProMED-mail feeds.
+              Currently only the main feed is used.
+              Mentions are determined by a toponym resolution algorithm
+              that counts a mention of any location within a country
+              as a mention of that country.
+          </p>
+          <h3>Year Range</h3>
+          <p>{{startYear}} to {{endYear}}</p>
+          {{> slider sliderMin=minYear sliderMax=maxYear}}
+      </div>
+  </div>
 </template>
