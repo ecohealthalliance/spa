@@ -78,7 +78,7 @@ Template.blindspotMap.onRendered ->
   info.update = (props) ->
     if props
       @_div.innerHTML = """
-      <b>#{props.NAME}</b><br />
+      <b>#{props.name}</b><br />
       Population: #{props.population}<br />
       Mentions: #{props.mentions}
       """
@@ -95,9 +95,8 @@ Template.blindspotMap.onRendered ->
       totalMentionsByCountry[countryInYear.ISO] += countryInYear.mentions
       populationByCountry[countryInYear.ISO] = countryInYear.Population
     processedFeatures = geoJsonFeatures.map (country)->
-      # TODO: France and Norway ISO_A2 codes don't seem to match the codes from geonames.org
-      country.properties.mentions = totalMentionsByCountry[country.properties.ISO_A2]
-      country.properties.population = populationByCountry[country.properties.ISO_A2]
+      country.properties.mentions = totalMentionsByCountry[country.properties.ISO2]
+      country.properties.population = populationByCountry[country.properties.ISO2]
       country
     if @geoJsonLayer
       @lMap.removeLayer(@geoJsonLayer)
