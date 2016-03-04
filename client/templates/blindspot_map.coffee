@@ -56,6 +56,7 @@ Template.blindspotMap.onRendered ->
     weight: 1
     opacity: 1
     color: '#CDD2D4'
+    dashArray: '3'
   zoomToFeature = (e)=>
     @lMap.fitBounds(e.target.getBounds())
   highlightFeature = (e)=>

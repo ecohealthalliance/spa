@@ -4,6 +4,7 @@
 @import 'globals.import'
 
 @import 'sidebar.import'
+@import 'slider.import'
 
 body
 html
@@ -24,7 +25,7 @@ body
   right 20px
   min-width 300px
   border-radius 4px
-  border 5px solid $blue-transparent
+  border 5px solid $p-transparent
   font-family $fonts
   .tab-content
     padding 10px
@@ -45,7 +46,7 @@ body
     &:last-of-type
       border-right 0
     > a
-      color $blue
+      color $primary
   .active
     background #EFEFEF
     font-weight bold
@@ -72,7 +73,7 @@ body
 .nav-tabs > li.active > a
 .nav-tabs > li.active > a:hover
 .nav-tabs > li.active > a:focus
-  background-color $blue
+  background-color $primary
   color white
 
 
@@ -88,7 +89,7 @@ body
 
 .tableDivider
   height 3px
-  background-color $blue
+  background-color $primary
   border-left solid #ddd 1px
 
 
@@ -282,15 +283,15 @@ p.intro
   border-left 0
   border-right 0
   background $ll-gray
-  border-top 4px solid $blue
-  border-bottom 1px solid $blue
+  border-top 4px solid $primary
+  border-bottom 1px solid $primary
   font-size 1em
 
 #searchIcon
   verticallyCenter()
   left 10px
   font-size 1.4em
-  color $blue
+  color $primary
 
 .twitter-typeahead
   position static !important // Overides typeahead's inline styling
@@ -328,12 +329,12 @@ p.intro
   width 22px
   height 22px
   border 2px solid white
-  background lighten($blue, 10%)
+  background lighten($primary, 10%)
   transition background .1s
   &:focus
     outline 0
-    border-color darken($blue, 30%)
-    background darken($blue, 10%)
+    border-color darken($primary, 30%)
+    background darken($primary, 10%)
   &:active
     background $green
     border-color white
@@ -508,7 +509,7 @@ p.intro
   opacity .50
 
 .action-menu-btn
-  background-color $blue
+  background-color $primary
   color white
 
 .action-menu-btn-selected
