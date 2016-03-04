@@ -37,6 +37,9 @@ Template.blindspotMap.onRendered ->
     maxZoom: 18
   }).addTo(@lMap)
   sidebar = L.control.sidebar('sidebar').addTo(@lMap)
+
+  #sidebarTable = L.control.sidebar('sidebar').addTo(@lMap)
+
   getColor = (val)->
     # return a color from the ramp based on a 0 to 1 value.
     # If the value exceeds one the last stop is used.
