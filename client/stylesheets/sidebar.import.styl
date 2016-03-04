@@ -1,23 +1,43 @@
 .sidebar
   box-shadow none
+  h1.logo
+    width 88%
+    margin 20px auto
+    background url(../images/spa-logo.svg) no-repeat
+    background-position center center
+    min-height 100px
+    text-indent -9999px
+
+.sidebar-pane
+  display block
+  width 305px
+
+.sidebar-pane-content
+  padding 0 25px
+  font-size 1em
+  font-weight 400
+  p
+    color $d-gray
 
 .sidebar-content
   background $whiteBG
 
 .sidebar-main
   .sidebar-tabs
-    border-left 3px solid darken($blue,10%)
+    border-left 3px solid darken($primary,10%)
 
 .sidebar-tabs
   width 55px
-  background $blue-transparent
+  background $primary-transparent
   opacity 1
   &.right
-    background linear-gradient(to right, rgba(255,0,0,0) 75% , $blue-transparent 25%)
+    background linear-gradient(to right, rgba(255,0,0,0) 75% , $primary-transparent 25%)
 
 #sidebar-plus-button
 #sidebar-minus-button
   color white
+  padding-top 8px
+  padding-bottom 8px
 
 .fa-white
   font-size 2em
@@ -28,22 +48,19 @@
   bottom 40px
   left 60px
   overflow hidden
-  background #496c8a
+  background $primary-transparent
 
 .sidebar-zoom-out
   position absolute
   bottom 5px
   left 60px
   overflow hidden
-  background #496c8a
+  background $primary-transparent
 
 .sidebar-zoom-out:hover
 .sidebar-zoom-in:hover
-  background #496c8a
+  background $primary-transparent
   opacity .75
 
 #sidebar
   overflow visible
-
-.sidebar-pane
-  width 300px
