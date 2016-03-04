@@ -19,7 +19,7 @@ Template.blindspotMap.onCreated ->
   )
 Template.blindspotMap.onRendered ->
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
-  @lMap = L.map("blindspot-map").setView([49.25044, -123.137], 4)
+  @lMap = L.map("blindspot-map", zoomControl: false).setView([49.25044, -123.137], 4)
   layer = L.tileLayer('//cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
     attribution: """Map tiles by <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>,
     under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
@@ -43,7 +43,7 @@ Template.blindspotMap.onRendered ->
   getColor = (val)->
     # return a color from the ramp based on a 0 to 1 value.
     # If the value exceeds one the last stop is used.
-    ramp = chroma.scale(["#3182bd", "#deebf7"]).colors(10)
+    ramp = chroma.scale(["#9e5324", "#F8ECE0"]).colors(10)
     ramp[Math.floor(10 * Math.max(0, Math.min(val, 0.99)))]
   style = (feature)=>
     fillColor: getColor(
@@ -55,18 +55,16 @@ Template.blindspotMap.onRendered ->
     )
     weight: 1
     opacity: 1
-    color: 'white'
-    dashArray: '3'
-    fillOpacity: 0.7
+    color: '#CDD2D4'
   zoomToFeature = (e)=>
     @lMap.fitBounds(e.target.getBounds())
   highlightFeature = (e)=>
     layer = e.target
     layer.setStyle
-      weight: 5
-      color: '#666'
+      weight: 1
+      color: '#2CBA74'
       dashArray: ''
-      fillOpacity: 0.7
+      fillOpacity: 0.8
     if not L.Browser.ie and not L.Browser.opera
       layer.bringToFront()
     info.update(layer.feature.properties)
