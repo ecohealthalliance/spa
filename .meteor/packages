@@ -26,4 +26,5 @@ twbs:bootstrap@3.3.5
 mquandalle:stylus@1.1.1
 fortawesome:fontawesome@4.4.0
 rcy:chromajs
+mquandalle:jade
 eha:slider

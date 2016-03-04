@@ -1,0 +1,31 @@
+template(name='blindspotMap')
+  #blindspot-map.map
+  #sidebar.sidebar.sidebar-left.sidebar-main
+    // Nav tabs
+    ul.sidebar-tabs
+      li#sidebar-collapse-tab
+        a(href='#sidebar-search-and-advanced-filter', role='tab')
+          i.fa.fa-chevron-circle-left.fa-white
+      button#sidebar-plus-button.sidebar-zoom-in.fa.fa-plus.btn.btn-sm
+      button#sidebar-minus-button.sidebar-zoom-out.fa.fa-minus.btn.btn-sm
+      
+    // Tab panes
+    .sidebar-content
+      h1 Surveillance Paucity Analysis
+      p
+        This map shows the number of mentions per capita of each country on ProMED-mail feeds. Currently only the main feed is used. Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
+        
+      h3 Year Range
+      p {{startYear}} to {{endYear}}
+      
+      +slider sliderMin=minYear sliderMax=maxYear
+  
+  #tableSidebar.sidebarRight.collapsed
+    ul.sidebar-tabs.right
+      li#sidebar-flightData-tab
+        a(href='#sidebar-flightData', role='tab')
+          i.fa.fa-angle-double-left.fa-white-arrow
+          i.fa.fa-table.fa-white-table
+    .sidebar-content
+      #sidebar-flightData.sidebar-pane 
+        +spaTable

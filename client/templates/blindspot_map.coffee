@@ -36,8 +36,8 @@ Template.blindspotMap.onRendered ->
     minZoom: 1
     maxZoom: 18
   }).addTo(@lMap)
-  
-  sidebar = L.control.sidebar('sidebar').addTo(@lMap)  
+
+  sidebar = L.control.sidebar('sidebar').addTo(@lMap)
   tableSidebar = L.control.sidebar('tableSidebar').addTo(@lMap)
 
   getColor = (val)->
@@ -89,6 +89,7 @@ Template.blindspotMap.onRendered ->
       @_div.innerHTML = 'Hover over a country'
   info.addTo(@lMap)
   @geoJsonLayer = null
+
   updateMap = _.throttle((geoJsonFeatures, blindspots)=>
     totalMentionsByCountry = {}
     populationByCountry = {}
@@ -97,9 +98,9 @@ Template.blindspotMap.onRendered ->
         totalMentionsByCountry[countryInYear.ISO] = 0
       totalMentionsByCountry[countryInYear.ISO] += countryInYear.mentions
       populationByCountry[countryInYear.ISO] = countryInYear.Population
-    
+
     #BMA: Something like this
-    Template.spaTable.blindSpotsTable.set blindspots.map 
+    # Template.spaTable.blindSpotsTable.set blindspots.map
 
     processedFeatures = geoJsonFeatures.map (country)->
       country.properties.mentions = totalMentionsByCountry[country.properties.ISO2]
@@ -120,8 +121,6 @@ Template.blindspotMap.onRendered ->
     }).addTo(@lMap)
   , 10000)
 
-  
-
   @autorun =>
     updateMap(@geoJsonFeatures.get(), Blindspots.find(
       $and: [
@@ -135,7 +134,7 @@ Template.blindspotMap.onRendered ->
         }
       ]
     ).fetch())
-    
+
 Template.blindspotMap.helpers
   minYear: ->
     Template.instance().minYear
