@@ -36,9 +36,9 @@ Template.blindspotMap.onRendered ->
     minZoom: 1
     maxZoom: 18
   }).addTo(@lMap)
-  sidebar = L.control.sidebar('sidebar').addTo(@lMap)
-
-  #sidebarTable = L.control.sidebar('sidebar').addTo(@lMap)
+  
+  sidebar = L.control.sidebar('sidebar').addTo(@lMap)  
+  tableSidebar = L.control.sidebar('tableSidebar').addTo(@lMap)
 
   getColor = (val)->
     # return a color from the ramp based on a 0 to 1 value.
@@ -97,6 +97,10 @@ Template.blindspotMap.onRendered ->
         totalMentionsByCountry[countryInYear.ISO] = 0
       totalMentionsByCountry[countryInYear.ISO] += countryInYear.mentions
       populationByCountry[countryInYear.ISO] = countryInYear.Population
+    
+    #BMA: Something like this
+    Template.spaTable.blindSpotsTable.set blindspots.map 
+
     processedFeatures = geoJsonFeatures.map (country)->
       country.properties.mentions = totalMentionsByCountry[country.properties.ISO2]
       country.properties.population = populationByCountry[country.properties.ISO2]
@@ -115,6 +119,9 @@ Template.blindspotMap.onRendered ->
           click: zoomToFeature
     }).addTo(@lMap)
   , 10000)
+
+  
+
   @autorun =>
     updateMap(@geoJsonFeatures.get(), Blindspots.find(
       $and: [
@@ -128,6 +135,7 @@ Template.blindspotMap.onRendered ->
         }
       ]
     ).fetch())
+    
 Template.blindspotMap.helpers
   minYear: ->
     Template.instance().minYear

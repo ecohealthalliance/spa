@@ -20,7 +20,7 @@ ejson
 coffeescript
 reactive-var
 bevanhunt:leaflet@0.3.18
-grits:flirt-sidebar@0.0.1
+grits:flirt-sidebar
 flawless:meteor-toastr@1.0.1
 twbs:bootstrap@3.3.5
 mquandalle:stylus@1.1.1
