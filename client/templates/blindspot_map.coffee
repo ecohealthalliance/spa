@@ -60,6 +60,7 @@ Template.blindspotMap.onRendered ->
     opacity: 1
     color: '#CDD2D4'
     dashArray: '3'
+    fillOpacity: 0.75
   zoomToFeature = (e)=>
     @lMap.fitBounds(e.target.getBounds())
   highlightFeature = (e)=>
@@ -68,7 +69,7 @@ Template.blindspotMap.onRendered ->
       weight: 1
       color: '#2CBA74'
       dashArray: ''
-      fillOpacity: 0.8
+      fillOpacity: 0.75
     if not L.Browser.ie and not L.Browser.opera
       layer.bringToFront()
     info.update(layer.feature.properties)
