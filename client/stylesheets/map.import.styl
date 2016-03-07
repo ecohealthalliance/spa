@@ -1,0 +1,37 @@
+.sidebar-closed
+  .leaflet-left.leaflet-top
+    left $sidebar-tabs-width - 10px
+
+.leaflet-left.leaflet-top
+  left $sidebar-full-width
+  top 0
+  right 0
+  border-radius 0
+  background $whiteBG
+  transition .5s
+  .info
+    display flex
+    align-items baseline
+    margin 0
+    padding 12px 15px 15px
+    background none
+    box-shadow none
+    font-family $primary-font
+    h2
+      display inline-block
+      margin 0
+      font-weight 800
+      font-size 2em
+      color darken($primary, 20%)
+    ul
+      margin-left 20px
+      margin-bottom 0
+      color $dd-gray
+      span
+        font-weight 600
+      &
+      li
+        display inline-block
+      li
+        font-size 1.3em
+        margin-right 20px
