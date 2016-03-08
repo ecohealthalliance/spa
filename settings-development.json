@@ -1,8 +1,9 @@
 {
-  "public": {
-    "analyticsSettings": {
-      "Google Analytics" : {"trackingId": "UA-54918272-6"}
-    }
-  },
-  "private": {
-  }
+	"public": {
+		"analyticsSettings": {
+			"Google Analytics": {
+				"trackingId": "UA-54918272-6"
+			}
+		}
+	}
+}
