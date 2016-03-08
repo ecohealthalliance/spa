@@ -1,1 +1,28 @@
 template(name="spaTable")
+  div.tab-content.dataTableContent
+    div#paths.tab-pane.active
+      div.pathsTableContainer
+        table#exploreTable.table.dataTable.tablesorter.tablesorter-default(role="grid")
+          thead
+            tr.tablesorter-headerRow(role="row")
+              each cells
+                th.tablesorter-header.tablesorter-headerUnSorted(data-column="0" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="exploreTable" unselectable="on" aria-sort="{{name}}" aria-label="Origin: No sort applied, activate to apply an ascending sort" style="-webkit-user-select: none;")
+                  div.tablesorter-header-inner= title
+          tbody(aria-live="polite" aria-relevant="all")
+            if data
+              each data
+                tr
+                  td= name
+                  td= mentions
+                  td= population
+            else
+              tr.row
+                td(colspan="12")
+                  span(style="font-style: italic;") No data
+  div.sidebarRightFooter
+    div.export
+      i.fa.fa-cloud-download.downloadIcon
+      button.btn.btn-sm.btn-default.exportData(data-type="json") JSON
+      button.btn.btn-sm.btn-default.exportData(data-type="csv") CSV
+      button.btn.btn-sm.btn-default.exportData(data-type="xml") XML
+      button.btn.btn-sm.btn-default.exportData(data-type="excel") XLSX
