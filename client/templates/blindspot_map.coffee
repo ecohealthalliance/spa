@@ -10,13 +10,13 @@ Template.blindspotMap.onCreated ->
     .fail (e)->
       console.log e
   @minYear = new ReactiveVar 1994
-  @maxYear = new ReactiveVar 2015
+  @maxYear = new ReactiveVar 2016
   Blindspots.find().observeChanges(
     added: (id, fields)=>
       if fields.year < @minYear.get()
         @minYear.set(fields.year)
-      else if fields.year > @maxYear.get()
-        @maxYear.set(fields.year)
+      else if fields.year + 1 > @maxYear.get()
+        @maxYear.set(fields.year + 1)
   )
 Template.blindspotMap.onRendered ->
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
@@ -136,7 +136,7 @@ Template.blindspotMap.onRendered ->
         }
         {
           year:
-            $lte: @endYear.get()
+            $lt: @endYear.get()
         }
       ]
     ).fetch())
