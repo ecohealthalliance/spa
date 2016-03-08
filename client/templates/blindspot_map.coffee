@@ -1,6 +1,7 @@
 Template.blindspotMap.onCreated ->
   Meteor.subscribe("blindspots")
-  @sideBarOpen = new ReactiveVar true
+  @sideBarLeftOpen = new ReactiveVar true
+  @sideBarRightOpen = new ReactiveVar false
   @startYear = new ReactiveVar 1999
   @endYear = new ReactiveVar 2000
   @geoJsonFeatures = new ReactiveVar []
@@ -194,6 +195,10 @@ Template.blindspotMap.events
     instance.endYear.set(parseInt(yearRange[1]))
   , 200)
   'click #sidebar-collapse-tab': (event, instance) ->
-    sideBarOpen = instance.sideBarOpen.get()
-    $('body').toggleClass('sidebar-closed')
+    sideBarLeftOpen = instance.sideBarLeftOpen.get()
+    $('body').toggleClass('sidebar-left-closed')
     instance.sideBarOpen.set not sideBarOpen
+  'click #sidebar-flightData-tab': (event, instance) ->
+    sideBarRightOpen = instance.sideBarRightOpen.get()
+    $('body').toggleClass('sidebar-right-closed')
+    instance.sideBarRightOpen.set not sideBarRightOpen
