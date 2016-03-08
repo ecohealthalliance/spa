@@ -7,6 +7,15 @@ Template.slider.onRendered ->
   @autorun =>
     if slider
       slider.destroy()
+    
+    console.log ( "Min: " + @sliderMin.get() );
+    console.log ( "Max: " + @sliderMax.get() );
+
+    if isNaN @sliderMin.get()
+      console.log( "Min is not a number" )
+    if isNaN @sliderMax.get()
+      console.log( "Max is not a number" )
+
     slider = noUiSlider.create(sliderEl, {
     	start: [ @sliderMin.get(), @sliderMax.get() ]
     	step: 1
