@@ -4,6 +4,7 @@ Template.blindspotMap.onCreated ->
   @startYear = new ReactiveVar 1999
   @endYear = new ReactiveVar 2000
   @geoJsonFeatures = new ReactiveVar []
+  @mapLoading = new ReactiveVar true
   $.getJSON("world.geo.json")
     .then (geoJsonData)=>
       @geoJsonFeatures.set(geoJsonData.features)
@@ -18,7 +19,22 @@ Template.blindspotMap.onCreated ->
       else if fields.year + 1 > @maxYear.get()
         @maxYear.set(fields.year + 1)
   )
+
+centerLoadingSpinner = ->
+  loadingContainerWidth = $('.loading-content').width() or 100
+  leftSideBarWidth = $('#sidebar').width()
+  rightSideBarWidth = $('.sidebarRight .sidebar-content').width()
+  mapViewWidth = $(document).width() - leftSideBarWidth
+  loadingSpinnerPosition = mapViewWidth / 2 - loadingContainerWidth / 2 + rightSideBarWidth / 2
+  $('.loading-content').css 'right', "#{loadingSpinnerPosition}px"
+watchWindowChange = ->
+  $(window).resize ->
+    centerLoadingSpinner()
+
 Template.blindspotMap.onRendered ->
+  centerLoadingSpinner()
+  watchWindowChange()
+  instance = @
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
   @lMap = L.map("blindspot-map", zoomControl: false).setView([49.25044, -123.137], 4)
   layer = L.tileLayer('//cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
@@ -125,7 +141,17 @@ Template.blindspotMap.onRendered ->
           mouseout: resetHighlight
           click: zoomToFeature
     }).addTo(@lMap)
+    if geoJsonFeatures.length and blindspots.length
+      instance.mapLoading.set false
+      $(window).off 'resize'
   , 10000)
+
+  @autorun =>
+    start = @startYear.get()
+    end = @endYear.get()
+    instance.mapLoading.set true
+    centerLoadingSpinner()
+    watchWindowChange()
 
   @autorun =>
     updateMap(@geoJsonFeatures.get(), Blindspots.find(
@@ -151,6 +177,8 @@ Template.blindspotMap.helpers
     Template.instance().startYear.get()
   endYear: ->
     Template.instance().endYear.get()
+  loading: ->
+    Template.instance().mapLoading.get()
 Template.blindspotMap.events
   'click #sidebar-plus-button': (event, instance) ->
     instance.lMap.zoomIn()
