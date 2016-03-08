@@ -99,7 +99,7 @@ Template.blindspotMap.onRendered ->
     @_div
   info.update = (props) ->
     if props
-      L.DomUtil.removeClass(@_div, 'hidden')
+      L.DomUtil.addClass(@_div, 'active')
       @_div.innerHTML = """
       <h2>#{props.name}</h2>
       <ul class='list-unstyled'>
@@ -108,7 +108,11 @@ Template.blindspotMap.onRendered ->
       </ul>
       """
     else
-      L.DomUtil.addClass(@_div, 'hidden')
+      L.DomUtil.removeClass(@_div, 'active')
+      @_div.innerHTML = """
+      <p>Hover over a country to view its number of mentions and population.</p>
+      """
+
   info.addTo(@lMap)
   @geoJsonLayer = null
 
