@@ -35,8 +35,20 @@ $slider-BG = darken($l-gray, 2%)
     border-bottom-left-radius 8px
     cursor pointer
     &::before
-      content ''
-      display none
+      position absolute
+      left 50%
+      top 50%
+      transform translate(-50%, -50%)
+      display block
+      content "||"
+      min-width 100%
+      background none
+      font-weight 800
+      text-align center
+      line-height 1em
+      font-size 1em
+      color lighten($primary, 30%)
+      text-shadow 0 1px 0px rgba(0,0,0,.3)
     &::after
       content ''
       display none
@@ -47,6 +59,8 @@ $slider-BG = darken($l-gray, 2%)
     &:active
       background $active
       border-color white
+      &::before
+        color lighten($active, 50%)
 
   .noUi-handle-lower
     left -10px

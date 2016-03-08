@@ -1,21 +1,22 @@
 Template.blindspotMap.onCreated ->
   Meteor.subscribe("blindspots")
-  @startYear = new ReactiveVar(1999)
-  @endYear = new ReactiveVar(2000)
-  @geoJsonFeatures = new ReactiveVar([])
+  @sideBarOpen = new ReactiveVar true
+  @startYear = new ReactiveVar 1999
+  @endYear = new ReactiveVar 2000
+  @geoJsonFeatures = new ReactiveVar []
   $.getJSON("world.geo.json")
     .then (geoJsonData)=>
       @geoJsonFeatures.set(geoJsonData.features)
     .fail (e)->
       console.log e
-  @minYear = new ReactiveVar(1994)
-  @maxYear = new ReactiveVar(2015)
+  @minYear = new ReactiveVar 1994
+  @maxYear = new ReactiveVar 2016
   Blindspots.find().observeChanges(
     added: (id, fields)=>
       if fields.year < @minYear.get()
         @minYear.set(fields.year)
-      else if fields.year > @maxYear.get()
-        @maxYear.set(fields.year)
+      else if fields.year + 1 > @maxYear.get()
+        @maxYear.set(fields.year + 1)
   )
 Template.blindspotMap.onRendered ->
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
@@ -45,6 +46,8 @@ Template.blindspotMap.onRendered ->
     # If the value exceeds one the last stop is used.
     ramp = chroma.scale(["#9e5324", "#F8ECE0"]).colors(10)
     ramp[Math.floor(10 * Math.max(0, Math.min(val, 0.99)))]
+  addCommas = (num)=>
+    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   style = (feature)=>
     fillColor: getColor(
       Math.log(
@@ -57,6 +60,7 @@ Template.blindspotMap.onRendered ->
     opacity: 1
     color: '#CDD2D4'
     dashArray: '3'
+    fillOpacity: 0.75
   zoomToFeature = (e)=>
     @lMap.fitBounds(e.target.getBounds())
   highlightFeature = (e)=>
@@ -65,27 +69,30 @@ Template.blindspotMap.onRendered ->
       weight: 1
       color: '#2CBA74'
       dashArray: ''
-      fillOpacity: 0.8
+      fillOpacity: 0.75
     if not L.Browser.ie and not L.Browser.opera
       layer.bringToFront()
     info.update(layer.feature.properties)
   resetHighlight = (e)=>
     @geoJsonLayer.resetStyle(e.target)
     info.update()
-  info = L.control()
+  info = L.control(position: 'topleft')
   info.onAdd = (map) ->
     @_div = L.DomUtil.create('div', 'info')
     @update()
     @_div
   info.update = (props) ->
     if props
+      L.DomUtil.removeClass(@_div, 'hidden')
       @_div.innerHTML = """
-      <b>#{props.name}</b><br />
-      Population: #{props.population}<br />
-      Mentions: #{props.mentions}
+      <h2>#{props.name}</h2>
+      <ul class='list-unstyled'>
+        <li><span>Mentions:</span> #{addCommas(props.mentions)}</li>
+        <li><span>Population:</span> #{addCommas(props.population)}</li>
+      </ul>
       """
     else
-      @_div.innerHTML = 'Hover over a country'
+      L.DomUtil.addClass(@_div, 'hidden')
   info.addTo(@lMap)
   @geoJsonLayer = null
 
@@ -129,10 +136,11 @@ Template.blindspotMap.onRendered ->
         }
         {
           year:
-            $lte: @endYear.get()
+            $lt: @endYear.get()
         }
       ]
     ).fetch())
+
 
 Template.blindspotMap.helpers
   minYear: ->
@@ -148,8 +156,12 @@ Template.blindspotMap.events
     instance.lMap.zoomIn()
   'click #sidebar-minus-button': (event, instance) ->
     instance.lMap.zoomOut()
-  "update #slider": _.debounce((evt, instance)->
+  'update #slider': _.debounce((evt, instance)->
     yearRange = $(evt.target)[0].noUiSlider.get()
     instance.startYear.set(parseInt(yearRange[0]))
     instance.endYear.set(parseInt(yearRange[1]))
   , 200)
+  'click #sidebar-collapse-tab': (event, instance) ->
+    sideBarOpen = instance.sideBarOpen.get()
+    $('body').toggleClass('sidebar-closed')
+    instance.sideBarOpen.set not sideBarOpen
