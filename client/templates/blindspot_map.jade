@@ -1,5 +1,11 @@
 template(name='blindspotMap')
   #blindspot-map.map
+    .loading(class="{{#unless loading}} hiddenLoader {{/unless}}")
+      .loading-content
+        if loading
+          i.loading-spinner
+          h1.loading-text Loading
+
   #sidebar.sidebar.sidebar-left.sidebar-main
     // Nav tabs
     ul.sidebar-tabs
@@ -8,7 +14,8 @@ template(name='blindspotMap')
           i.fa.fa-chevron-circle-left.fa-white
       button#sidebar-plus-button.sidebar-zoom-in.fa.fa-plus.btn.btn-sm
       button#sidebar-minus-button.sidebar-zoom-out.fa.fa-minus.btn.btn-sm
-      
+
+
     // Tab panes
     .sidebar-content
       .sidebar-pane.active
@@ -31,4 +38,4 @@ template(name='blindspotMap')
           i.fa.fa-table.fa-white-table
     .sidebar-content
       #sidebar-flightData.sidebar-pane 
-        +spaTable
+        +spaTable    
