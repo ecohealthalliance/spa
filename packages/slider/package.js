@@ -1,6 +1,6 @@
 Package.describe({
   name: 'eha:slider',
-  version: '0.0.1',
+  version: '0.0.2',
   summary: 'A slider component based on noUiSlider',
   documentation: 'README.md'
 });

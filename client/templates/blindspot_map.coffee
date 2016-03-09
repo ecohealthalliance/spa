@@ -3,7 +3,8 @@ Template.blindspotMap.onCreated ->
   @sideBarLeftOpen = new ReactiveVar true
   @sideBarRightOpen = new ReactiveVar false
   @startYear = new ReactiveVar 1999
-  @endYear = new ReactiveVar 2000
+  Session.set('startYear', 1999)
+  Session.set('endYear', 2000)
   @geoJsonFeatures = new ReactiveVar []
   @mapLoading = new ReactiveVar true
   $.getJSON("world.geo.json")
@@ -14,7 +15,7 @@ Template.blindspotMap.onCreated ->
   @minYear = new ReactiveVar 1994
   @maxYear = new ReactiveVar 2016
   Blindspots.find().observeChanges(
-    added: (id, fields)=>
+    added: (id, fields) =>
       year = parseInt fields.year
       if year < @minYear.get()
         @minYear.set(year)
@@ -70,7 +71,7 @@ Template.blindspotMap.onRendered ->
     fillColor: getColor(
       Math.log(
         1 + 1000000 * feature.properties.mentions / (
-          (@endYear.get() - @startYear.get()) * feature.properties.population
+          (Session.get('endYear') - Session.get('startYear')) * feature.properties.population
         )
       )
     )
@@ -152,9 +153,9 @@ Template.blindspotMap.onRendered ->
       $(window).off 'resize'
   , 10000)
 
-  @autorun =>
-    start = @startYear.get()
-    end = @endYear.get()
+  @autorun ->
+    start = Session.get('startYear')
+    end = Session.get('endYear')
     instance.mapLoading.set true
     centerLoadingSpinner()
     watchWindowChange()
@@ -164,11 +165,11 @@ Template.blindspotMap.onRendered ->
       $and: [
         {
           year:
-            $gte: @startYear.get()
+            $gte: Session.get('startYear')
         }
         {
           year:
-            $lt: @endYear.get()
+            $lt: Session.get('endYear')
         }
       ]
     ).fetch())
@@ -180,9 +181,9 @@ Template.blindspotMap.helpers
   maxYear: ->
     Template.instance().maxYear
   startYear: ->
-    Template.instance().startYear.get()
+    Session.get('startYear')
   endYear: ->
-    Template.instance().endYear.get()
+    Session.get('endYear')
   loading: ->
     Template.instance().mapLoading.get()
 Template.blindspotMap.events
@@ -192,8 +193,10 @@ Template.blindspotMap.events
     instance.lMap.zoomOut()
   'update #slider': _.debounce((evt, instance)->
     yearRange = $(evt.target)[0].noUiSlider.get()
-    instance.startYear.set(parseInt(yearRange[0]))
-    instance.endYear.set(parseInt(yearRange[1]))
+    Session.set('minYear', parseInt yearRange[0])
+    Session.set('maxYear', parseInt yearRange[1])
+    Session.set('startYear', parseInt yearRange[0])
+    Session.set('endYear', parseInt yearRange[1])
   , 200)
   'click #sidebar-collapse-tab': (event, instance) ->
     sideBarLeftOpen = instance.sideBarLeftOpen.get()

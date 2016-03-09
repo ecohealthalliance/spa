@@ -7,7 +7,9 @@ Template.spaTable.onCreated ->
     @ready.set(false)
     @countries.remove({})
     _countries = {}
-    Blindspots.find().forEach (item, i) ->
+    yearMin = Session.get('startYear')
+    yearMax = Session.get('endYear')
+    Blindspots.find({year: {$gte: yearMin, $lt: yearMax}}).forEach (item, i) ->
       unless _countries[item.ISO]
         _countries[item.ISO] = {name: item.Country, mentions: 0, population: 0}
       _countries[item.ISO].mentions += item.mentions
