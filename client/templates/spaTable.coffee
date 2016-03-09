@@ -1,31 +1,36 @@
 Template.spaTable.onCreated ->
-  @sortBy = new ReactiveVar('Country')
-  @sortOrder = new ReactiveVar(1)
-
-Template.spaTable.helpers
-  cells: ->
-    [
-      { name: 'Country', title: "Country" },
-      { name: 'mentions', title: "Mentions" },
-      { name: 'Population', title: "Population" }
-    ]
-  data: ->
-    instance = Template.instance()
-    sortBy = instance.sortBy.get()
-    sortOrder = instance.sortOrder.get()
+  @ready = new ReactiveVar false
+  @sortBy = new ReactiveVar 'mentions'
+  @sortOrder = new ReactiveVar 0
+  @countries = new Meteor.Collection(null)
+  @autorun =>
+    @ready.set(false)
+    @countries.remove({})
     _countries = {}
-    _sort = {}
-    _sort[sortBy] = sortOrder
-    Blindspots.find({}, {sort: _sort}).forEach (item, i) ->
+    Blindspots.find().forEach (item, i) ->
       unless _countries[item.ISO]
         _countries[item.ISO] = {name: item.Country, mentions: 0, population: 0}
       _countries[item.ISO].mentions += item.mentions
       _countries[item.ISO].population += item.Population
       true
-    countries = []
-    for key, country of _countries
-      countries.push country
-    countries
+    for ISO, country of _countries
+      @countries.insert(country)
+    @ready.set(true)
+
+Template.spaTable.helpers
+  cells: ->
+    [
+      { name: 'name', title: "Country" },
+      { name: 'mentions', title: "Mentions" },
+      { name: 'population', title: "Population" }
+    ]
+  data: ->
+    instance = Template.instance()
+    _sort = {}
+    _sort[instance.sortBy.get()] = instance.sortOrder.get()
+    instance.countries.find({}, {sort: _sort})
+  ready: ->
+    Template.instance().ready.get()
 
 Template.spaTable.events
   'click th': (event, instance) ->
