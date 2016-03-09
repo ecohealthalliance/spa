@@ -50,3 +50,11 @@ Template.spaTable.events
       instance.sortOrder.set(1) # reset back to 1
     else
       instance.sortOrder.set(-instance.sortOrder.get())
+  'click .exportData': (event, instance) ->
+    instance.$('.dtHidden').show()
+    fileType = $(event.currentTarget).attr("data-type")
+    activeTable = instance.$('.dataTableContent').find('.active').find('.table.dataTable')
+    if activeTable.length
+      activeTable.tableExport({type: fileType})
+    instance.$('.dtHidden').hide()
+    return
