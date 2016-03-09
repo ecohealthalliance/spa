@@ -199,7 +199,7 @@ Template.blindspotMap.events
     sideBarLeftOpen = instance.sideBarLeftOpen.get()
     $('body').toggleClass('sidebar-left-closed')
     instance.sideBarOpen.set not sideBarOpen
-  'click #sidebar-flightData-tab': (event, instance) ->
+  'click #sidebar-table-tab': (event, instance) ->
     sideBarRightOpen = instance.sideBarRightOpen.get()
     $('body').toggleClass('sidebar-right-closed')
     instance.sideBarRightOpen.set not sideBarRightOpen
