@@ -16,12 +16,13 @@ template(name="spaTable")
                     td= name
                     td= mentions
                     td= population
+                    td= mentionsPerCapita
               else
                 tr.row
                   td(colspan="12")
                     span(style="font-style: italic;") No data
     else
-    |...
+      |...
 
   if ready
     div.sidebarRightFooter

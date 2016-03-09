@@ -1,6 +1,6 @@
 Template.spaTable.onCreated ->
   @ready = new ReactiveVar false
-  @sortBy = new ReactiveVar 'mentions'
+  @sortBy = new ReactiveVar 'mentionsPerCapita'
   @sortOrder = new ReactiveVar 0
   @countries = new Meteor.Collection(null)
   @autorun =>
@@ -16,6 +16,7 @@ Template.spaTable.onCreated ->
       _countries[item.ISO].population += item.Population
       true
     for ISO, country of _countries
+      country.mentionsPerCapita = country.mentions / country.population || 0
       @countries.insert(country)
     @ready.set(true)
 
@@ -25,6 +26,7 @@ Template.spaTable.helpers
       { name: 'name', title: "Country" },
       { name: 'mentions', title: "Mentions" },
       { name: 'population', title: "Population" }
+      { name: 'mentionsPerCapita', title: "Mentions per capita" },
     ]
   data: ->
     instance = Template.instance()
