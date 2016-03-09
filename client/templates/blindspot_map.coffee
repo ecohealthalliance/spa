@@ -15,10 +15,11 @@ Template.blindspotMap.onCreated ->
   @maxYear = new ReactiveVar 2016
   Blindspots.find().observeChanges(
     added: (id, fields)=>
-      if fields.year < @minYear.get()
-        @minYear.set(fields.year)
-      else if fields.year + 1 > @maxYear.get()
-        @maxYear.set(fields.year + 1)
+      year = parseInt fields.year
+      if year < @minYear.get()
+        @minYear.set(year)
+      else if year + 1 > @maxYear.get()
+        @maxYear.set(year + 1)
   )
 
 centerLoadingSpinner = ->
