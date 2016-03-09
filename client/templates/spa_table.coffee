@@ -21,6 +21,10 @@ Template.spaTable.onCreated ->
     @ready.set(true)
 
 Template.spaTable.helpers
+  startYear: ->
+    Session.get('startYear')
+  endYear: ->
+    Session.get('endYear')
   cells: ->
     [
       { name: 'name', title: "Country" },
