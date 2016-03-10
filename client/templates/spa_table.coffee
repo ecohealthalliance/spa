@@ -1,25 +1,15 @@
 Template.spaTable.onCreated ->
   @ready = new ReactiveVar false
   @sortBy = new ReactiveVar 'mentionsPerCapita'
-  @sortOrder = new ReactiveVar 0
+  @sortOrder = new ReactiveVar 1
   @countries = new Meteor.Collection(null)
+  @aggregatedCountryData = @data.aggregatedCountryData
   @autorun =>
     @ready.set(false)
     @countries.remove({})
-    _countries = {}
-    yearMin = Session.get('startYear')
-    yearMax = Session.get('endYear')
-    Blindspots.find({year: {$gte: yearMin, $lt: yearMax}}).forEach (item, i) ->
-      unless _countries[item.ISO]
-        _countries[item.ISO] = {name: item.Country, mentions: 0, population: 0}
-      _countries[item.ISO].mentions += item.mentions
-      _countries[item.ISO].population += item.Population
-      true
-    for ISO, country of _countries
-      country.mentionsPerCapita = country.mentions / country.population || 0
+    for ISO, country of @aggregatedCountryData.get()
       @countries.insert(country)
     @ready.set(true)
-
 Template.spaTable.helpers
   startYear: ->
     Session.get('startYear')
@@ -36,7 +26,15 @@ Template.spaTable.helpers
     instance = Template.instance()
     _sort = {}
     _sort[instance.sortBy.get()] = instance.sortOrder.get()
-    instance.countries.find({}, {sort: _sort})
+    # The mongo sort doesn't group NaNs so a custom sort function is used.
+    _.sortBy(instance.countries.find({}).fetch(), (item)->
+      value = item[instance.sortBy.get()]
+      if _.isNaN(value)
+        return -1 * instance.sortOrder.get()
+      else
+       return value * instance.sortOrder.get()
+    )
+      
   ready: ->
     Template.instance().ready.get()
 

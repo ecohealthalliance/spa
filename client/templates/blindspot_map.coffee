@@ -1,27 +1,20 @@
 Template.blindspotMap.onCreated ->
-  Meteor.subscribe("blindspots")
+  @aggregatedCountryDataRV = new ReactiveVar {}
   @sideBarLeftOpen = new ReactiveVar true
   @sideBarRightOpen = new ReactiveVar false
-  @startYear = new ReactiveVar 1999
   Session.set('startYear', 1999)
   Session.set('endYear', 2000)
   @geoJsonFeatures = new ReactiveVar []
   @mapLoading = new ReactiveVar true
-  $.getJSON("world.geo.json")
-    .then (geoJsonData)=>
-      @geoJsonFeatures.set(geoJsonData.features)
+  @geoJsonFeaturesPromise = $.getJSON("world.geo.json")
     .fail (e)->
       console.log e
   @minYear = new ReactiveVar 1994
   @maxYear = new ReactiveVar 2016
-  Blindspots.find().observeChanges(
-    added: (id, fields) =>
-      year = parseInt fields.year
-      if year < @minYear.get()
-        @minYear.set(year)
-      else if year + 1 > @maxYear.get()
-        @maxYear.set(year + 1)
-  )
+  Meteor.call 'getPostsDateRange', (err, [startDate, endDate])=>
+    console.log("Most recent article date:", endDate)
+    @minYear.set startDate.getUTCFullYear()
+    @maxYear.set endDate.getUTCFullYear() + 1
 
 centerLoadingSpinner = ->
   loadingContainerWidth = $('.loading-content').width() or 100
@@ -59,121 +52,104 @@ Template.blindspotMap.onRendered ->
 
   sidebar = L.control.sidebar('sidebar').addTo(@lMap)
   tableSidebar = L.control.sidebar('tableSidebar').addTo(@lMap)
-
-  getColor = (val)->
-    # return a color from the ramp based on a 0 to 1 value.
-    # If the value exceeds one the last stop is used.
-    ramp = chroma.scale(["#9e5324", "#F8ECE0"]).colors(10)
-    ramp[Math.floor(10 * Math.max(0, Math.min(val, 0.99)))]
-  addCommas = (num)=>
-    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  style = (feature)=>
-    fillColor: getColor(
-      Math.log(
-        1 + 1000000 * feature.properties.mentions / (
-          (Session.get('endYear') - Session.get('startYear')) * feature.properties.population
+  @geoJsonFeaturesPromise.then ({features: geoJsonFeatures})=>
+    aggregatedCountryData = {}
+    getColor = (val)->
+      # return a color from the ramp based on a 0 to 1 value.
+      # If the value exceeds one the last stop is used.
+      ramp = chroma.scale(["#9e5324", "#F8ECE0"]).colors(10)
+      ramp[Math.floor(10 * Math.max(0, Math.min(val, 0.99)))]
+    addCommas = (num)=>
+      num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    style = (feature)=>
+      fillColor: getColor(
+        Math.log(
+          1 + 1000000 * (aggregatedCountryData[feature.properties.ISO2]?.mentionsPerCapita) / (
+            (Session.get('endYear') - Session.get('startYear'))
+          )
         )
       )
-    )
-    weight: 1
-    opacity: 1
-    color: '#CDD2D4'
-    dashArray: '3'
-    fillOpacity: 0.75
-  zoomToFeature = (e)=>
-    @lMap.fitBounds(e.target.getBounds())
-  highlightFeature = (e)=>
-    layer = e.target
-    layer.setStyle
       weight: 1
-      color: '#2CBA74'
-      dashArray: ''
+      opacity: 1
+      color: '#CDD2D4'
+      dashArray: '3'
       fillOpacity: 0.75
-    if not L.Browser.ie and not L.Browser.opera
-      layer.bringToFront()
-    info.update(layer.feature.properties)
-  resetHighlight = (e)=>
-    @geoJsonLayer.resetStyle(e.target)
-    info.update()
-  info = L.control(position: 'topleft')
-  info.onAdd = (map) ->
-    @_div = L.DomUtil.create('div', 'info')
-    @update()
-    @_div
-  info.update = (props) ->
-    if props
-      L.DomUtil.addClass(@_div, 'active')
-      @_div.innerHTML = """
-      <h2>#{props.name}</h2>
-      <ul class='list-unstyled'>
-        <li><span>Mentions:</span> #{addCommas(props.mentions)}</li>
-        <li><span>Population:</span> #{addCommas(props.population)}</li>
-      </ul>
-      """
-    else
-      L.DomUtil.removeClass(@_div, 'active')
-      @_div.innerHTML = """
-      <p>Hover over a country to view its number of mentions and population.</p>
-      """
-
-  info.addTo(@lMap)
-  @geoJsonLayer = null
-
-  updateMap = _.throttle((geoJsonFeatures, blindspots)=>
-    totalMentionsByCountry = {}
-    populationByCountry = {}
-    blindspots.map (countryInYear)->
-      if countryInYear.ISO not of totalMentionsByCountry
-        totalMentionsByCountry[countryInYear.ISO] = 0
-      totalMentionsByCountry[countryInYear.ISO] += countryInYear.mentions
-      populationByCountry[countryInYear.ISO] = countryInYear.Population
-
-    #BMA: Something like this
-    # Template.spaTable.blindSpotsTable.set blindspots.map
-
-    processedFeatures = geoJsonFeatures.map (country)->
-      country.properties.mentions = totalMentionsByCountry[country.properties.ISO2]
-      country.properties.population = populationByCountry[country.properties.ISO2]
-      country
-    if @geoJsonLayer
-      @lMap.removeLayer(@geoJsonLayer)
+    zoomToFeature = (e)=>
+      @lMap.fitBounds(e.target.getBounds())
+    highlightFeature = (e)=>
+      layer = e.target
+      layer.setStyle
+        weight: 1
+        color: '#2CBA74'
+        dashArray: ''
+        fillOpacity: 0.75
+      if not L.Browser.ie and not L.Browser.opera
+        layer.bringToFront()
+      info.update(layer.feature.properties)
+    resetHighlight = (e)=>
+      @geoJsonLayer.resetStyle(e.target)
+      info.update()
+    info = L.control(position: 'topleft')
+    info.onAdd = (map) ->
+      @_div = L.DomUtil.create('div', 'info')
+      @update()
+      @_div
+    info.update = (props) ->
+      if props
+        L.DomUtil.addClass(@_div, 'active')
+        countryData = aggregatedCountryData[props.ISO2]
+        @_div.innerHTML = """
+        <h2>#{addCommas(countryData.name)}</h2>
+        <ul class='list-unstyled'>
+          <li><span>Mentions:</span> #{addCommas(countryData.mentions)}</li>
+          <li><span>Population:</span> #{addCommas(countryData.population)}</li>
+        </ul>
+        """
+      else
+        L.DomUtil.removeClass(@_div, 'active')
+        @_div.innerHTML = """
+        <p>Hover over a country to view its number of mentions and population.</p>
+        """
+    info.addTo(@lMap)
+    countryLayers = []
     @geoJsonLayer = L.geoJson({
-        features: processedFeatures
+        features: geoJsonFeatures
         type: "FeatureCollection"
       }, {
       style: style
       onEachFeature: (feature, layer)->
+        countryLayers.push(layer)
         layer.on
           mouseover: highlightFeature
           mouseout: resetHighlight
           click: zoomToFeature
     }).addTo(@lMap)
-    if geoJsonFeatures.length and blindspots.length
-      instance.mapLoading.set false
-      $(window).off 'resize'
-  , 10000)
 
-  @autorun ->
-    start = Session.get('startYear')
-    end = Session.get('endYear')
-    instance.mapLoading.set true
-    centerLoadingSpinner()
-    watchWindowChange()
+    updateMap = =>
+      unless _.isEmpty(aggregatedCountryData)
+        instance.mapLoading.set false
+        $(window).off 'resize'
+      countryLayers.forEach (layer)=>
+        @geoJsonLayer.resetStyle(layer)
 
-  @autorun =>
-    updateMap(@geoJsonFeatures.get(), Blindspots.find(
-      $and: [
-        {
-          year:
-            $gte: Session.get('startYear')
-        }
-        {
-          year:
-            $lt: Session.get('endYear')
-        }
-      ]
-    ).fetch())
+    @autorun ->
+      start = Session.get('startYear')
+      end = Session.get('endYear')
+      instance.mapLoading.set true
+      centerLoadingSpinner()
+      watchWindowChange()
 
+    @autorun =>
+      Meteor.call(
+        'aggregateMentionsOverYearRange',
+        Session.get('startYear'), Session.get('endYear'),
+        (err, result)=>
+          if err
+            throw err
+          aggregatedCountryData = result
+          @aggregatedCountryDataRV.set result
+          updateMap()
+      )
 
 Template.blindspotMap.helpers
   minYear: ->
@@ -186,6 +162,8 @@ Template.blindspotMap.helpers
     Session.get('endYear')
   loading: ->
     Template.instance().mapLoading.get()
+  aggregatedCountryData: ->
+    Template.instance().aggregatedCountryDataRV
 Template.blindspotMap.events
   'click #sidebar-plus-button': (event, instance) ->
     instance.lMap.zoomIn()
