@@ -3,24 +3,19 @@
     background none
   &:not(.collapsed)
     .sidebar-tabs.right
-      background linear-gradient(to right, rgba(255,0,0,0) 90% , $blue-transparent 10%)
-    #sidebar-flightData-tab
+      background linear-gradient(to right, rgba(255,0,0,0) 90% , $primary-transparent 10%)
+    #sidebar-table-tab
       right 10%
 
-#sidebar-flightData
+#sidebar-table
   height 100%
   width 100%
   display flex
   flex-flow column
+  background $whiteBG
 
-#sidebar-flightData-tab
+#sidebar-table-tab
   verticallyCenter()
-  background alpha($blue, 90%)
-  border-radius 4px
-  height 32px
-  line-height 40px
-
-#sidebar-flightData-tab
   right 25%
   height 60px
   border-top-left-radius 4px
@@ -29,7 +24,7 @@
   border-bottom-right-radius 0
   width auto
   min-width 75%
-  background $blue-transparent
+  background $primary-transparent
   > a
     line-height normal
     display flex
@@ -41,13 +36,14 @@
     color white
     transition background .2s
     &:hover
-      background alpha(darken($blue-transparent, 30%), 70%)
+      background linear-gradient(to right, alpha(darken($primary-transparent, 30%), 70%),  transparent)
+      color white
     .fa
       margin 0 3px
       &:first-of-type
         margin-left 5px
   &.active
-    border-right 1px solid darken($blue-transparent, 10%)
+    border-right 1px solid darken($primary-transparent, 10%)
     min-width 40%
     height 100px
     > a
@@ -57,12 +53,12 @@
         display none
 
 .table-tabs
-  flexTabs($whiteBG, $blue-transparent, $l-gray, true)
+  flexTabs($whiteBG, $primary-transparent, $l-gray, true)
   flex-shrink 0
   font-size 1.1em
   letter-spacing .02em
-  border-bottom 3px solid $blue-transparent
-  border-left 1px solid darken($blue-transparent, 10%)
+  border-bottom 3px solid $primary-transparent
+  border-left 1px solid darken($primary-transparent, 10%)
 
   &.nav-tabs
     > li
@@ -79,23 +75,9 @@
   overflow-x hidden
   background alpha($whiteBG, 95%)
 
-.pathsTableContainer
-  bottom 0px
-
-.pathTableRow
-  width 350px
-  text-align center
-  cursor pointer
-  &:hover
-    background $ll-gray
-
-.nodeTableRow, .heatmapTableRow
-  width 350px
-  text-align center
-
 .activeRow
   color white
-  background-color alpha($blue, 90%)
+  background-color alpha($primary, 90%)
 
 .tablesorter
   cursor pointer
