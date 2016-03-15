@@ -34,9 +34,17 @@ Template.spaTable.helpers
       else
        return value * instance.sortOrder.get()
     )
-      
+
   ready: ->
     Template.instance().ready.get()
+
+  sortDirectionClass: ->
+    instance = Template.instance()
+    if @name == instance.sortBy.get()
+      if instance.sortOrder.get() == 1
+        'tablesorter-headerAsc'
+      else
+        'tablesorter-headerDesc'
 
 Template.spaTable.events
   'click th': (event, instance) ->
