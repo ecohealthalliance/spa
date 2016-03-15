@@ -14,7 +14,6 @@
     .loading-content
       opacity 0
 
-
   .loading-content
     position absolute
     top 45%
@@ -39,3 +38,17 @@
     font-size 3em
     height 100px
     width 100px
+
+  &.small
+    .loading-spinner
+      height 75px
+      width 75px
+    .loading-text
+      font-size 1.5em
+
+for $num in -1 0 1 2 3
+  .space-btm-{$num}
+    margin-bottom $num*10px
+
+  .space-top-{$num}
+    margin-top $num*10px
