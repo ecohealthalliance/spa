@@ -1,3 +1,21 @@
+Template.blindspotMap.onCreated ->
+  @aggregatedCountryDataRV = new ReactiveVar {}
+  @sideBarLeftOpen = new ReactiveVar true
+  @sideBarRightOpen = new ReactiveVar false
+  Session.set('startYear', 1999)
+  Session.set('endYear', 2000)
+  @geoJsonFeatures = new ReactiveVar []
+  @mapLoading = new ReactiveVar true
+  @geoJsonFeaturesPromise = $.getJSON("world.geo.json")
+    .fail (e)->
+      console.log e
+  @minYear = new ReactiveVar 1994
+  @maxYear = new ReactiveVar 2016
+  Meteor.call 'getPostsDateRange', (err, [startDate, endDate])=>
+    console.log("Most recent article date:", endDate)
+    @minYear.set startDate.getUTCFullYear()
+    @maxYear.set endDate.getUTCFullYear() + 1
+
 centerLoadingSpinner = ->
   loadingContainerWidth = $('.loading-content').width() or 100
   leftSideBarWidth = $('#sidebar').width()
@@ -9,62 +27,7 @@ watchWindowChange = ->
   $(window).resize ->
     centerLoadingSpinner()
 
-formatDate = (d)->
-  day = ('0' + d.getDate()).slice(-2)
-  month = ('0' + (d.getMonth() + 1)).slice(-2)
-  year = String(d.getFullYear()).slice(-2)
-  "#{month}/#{day}/#{year}"
-
-# These take a javascript datetimes and truncate the time component so that it
-# is either the start or end of the day respectively.
-truncateDateToStart = (d)->
-  d.setHours(0)
-  d.setMinutes(0)
-  d.setSeconds(0)
-  d
-truncateDateToEnd = (d)->
-  d.setHours(23)
-  d.setMinutes(59)
-  d.setSeconds(59)
-  d
-
-Template.blindspotMap.onCreated ->
-  @aggregatedCountryDataRV = new ReactiveVar {}
-  @sideBarLeftOpen = new ReactiveVar true
-  @sideBarRightOpen = new ReactiveVar false
-  Session.set('startDate', new Date('1/1/1999'))
-  Session.set('endDate', new Date('1/1/2000'))
-  @geoJsonFeatures = new ReactiveVar []
-  @mapLoading = new ReactiveVar true
-  @geoJsonFeaturesPromise = $.getJSON("world.geo.json")
-    .fail (e)->
-      console.log e
-  @minDate = new ReactiveVar truncateDateToStart(new Date('1/1/1994'))
-  @maxDate = new ReactiveVar truncateDateToEnd(new Date('1/1/2016'))
-  @intervalStartDate = new ReactiveVar new Date('1/1/1994')
-  @intervalEndDate = new ReactiveVar new Date('1/1/2016')
-  Meteor.call 'getPostsDateRange', (err, [startDate, endDate])=>
-    console.log("Most recent article date:", endDate)
-    @minDate.set startDate
-    @maxDate.set endDate
-    @intervalStartDate.set startDate
-    @intervalEndDate.set endDate
-
 Template.blindspotMap.onRendered ->
-  @autorun =>
-    @$('#intervalStartDate').data('DateTimePicker')?.destroy()
-    @$('#intervalStartDate').datetimepicker(
-      format: 'MM/DD/YY'
-      minDate: truncateDateToStart @minDate.get()
-      maxDate: truncateDateToEnd @maxDate.get()
-    )
-    @$('#intervalEndDate').data('DateTimePicker')?.destroy()
-    @$('#intervalEndDate').datetimepicker(
-      format: 'MM/DD/YY'
-      minDate: truncateDateToStart @minDate.get()
-      maxDate: truncateDateToEnd @maxDate.get()
-    )
-  
   centerLoadingSpinner()
   watchWindowChange()
   instance = @
@@ -101,8 +64,8 @@ Template.blindspotMap.onRendered ->
     style = (feature)=>
       fillColor: getColor(
         Math.log(
-          1 + 20000000000000000 * (aggregatedCountryData[feature.properties.ISO2]?.mentionsPerCapita) / (
-            (Session.get('endDate') - Session.get('startDate'))
+          1 + 1000000 * (aggregatedCountryData[feature.properties.ISO2]?.mentionsPerCapita) / (
+            (Session.get('endYear') - Session.get('startYear'))
           )
         )
       )
@@ -170,51 +133,33 @@ Template.blindspotMap.onRendered ->
         @geoJsonLayer.resetStyle(layer)
 
     @autorun ->
-      Session.get('startDate')
-      Session.get('endDate')
+      start = Session.get('startYear')
+      end = Session.get('endYear')
       instance.mapLoading.set true
       centerLoadingSpinner()
       watchWindowChange()
 
     @autorun =>
       Meteor.call(
-        'aggregateMentionsOverDateRange',
-        Session.get('startDate'), Session.get('endDate'),
-        (err, mentionsByCountry)=>
+        'aggregateMentionsOverYearRange',
+        Session.get('startYear'), Session.get('endYear'),
+        (err, result)=>
           if err
             throw err
-          aggregatedCountryData = _.object geoJsonFeatures.map (feature)->
-            {properties: {ISO2, population, name}} = feature
-            mentions = mentionsByCountry[ISO2] or 0
-            [ISO2, {
-              name: name
-              population: population
-              mentions: mentions
-              mentionsPerCapita: mentions / population
-            }]
-          @aggregatedCountryDataRV.set aggregatedCountryData
+          aggregatedCountryData = result
+          @aggregatedCountryDataRV.set result
           updateMap()
       )
 
 Template.blindspotMap.helpers
-  minDate: ->
-    Template.instance().minDate.get().toLocaleDateString()
-  maxDate: ->
-    Template.instance().maxDate.get().toLocaleDateString()
-  intervalStartDate: ->
-    Template.instance().intervalStartDate
-  intervalEndDate: ->
-    Template.instance().intervalEndDate
-  formattedIntervalStartDate: ->
-    formatDate Template.instance().intervalStartDate.get()
-  formattedIntervalEndDate: ->
-    formatDate Template.instance().intervalEndDate.get()
-  intervalGreaterThanOneDay: ->
-    (Template.instance().intervalEndDate.get() - Template.instance().intervalStartDate.get()) > 1000 * 60 * 60 * 24
-  startDate: ->
-    Session.get('startDate').toLocaleDateString()
-  endDate: ->
-    Session.get('endDate').toLocaleDateString()
+  minYear: ->
+    Template.instance().minYear
+  maxYear: ->
+    Template.instance().maxYear
+  startYear: ->
+    Session.get('startYear')
+  endYear: ->
+    Session.get('endYear')
   loading: ->
     Template.instance().mapLoading.get()
   aggregatedCountryData: ->
@@ -225,16 +170,12 @@ Template.blindspotMap.events
   'click #sidebar-minus-button': (event, instance) ->
     instance.lMap.zoomOut()
   'update #slider': _.debounce((evt, instance)->
-    range = $(evt.target)[0].noUiSlider.get()
-    Session.set('startDate', truncateDateToStart(new Date(parseFloat(range[0]))))
-    Session.set('endDate', truncateDateToEnd(new Date(parseFloat(range[1]))))
+    yearRange = $(evt.target)[0].noUiSlider.get()
+    Session.set('minYear', parseInt yearRange[0])
+    Session.set('maxYear', parseInt yearRange[1])
+    Session.set('startYear', parseInt yearRange[0])
+    Session.set('endYear', parseInt yearRange[1])
   , 200)
-  'dp.change #intervalStartDate': (event, instance)->
-    d = $(event.target).data('DateTimePicker')?.date().toDate()
-    if d then instance.intervalStartDate.set d
-  'dp.change #intervalEndDate': (event, instance)->
-    d = $(event.target).data('DateTimePicker')?.date().toDate()
-    if d then instance.intervalEndDate.set d
   'click #sidebar-collapse-tab': (event, instance) ->
     sideBarLeftOpen = instance.sideBarLeftOpen.get()
     $('body').toggleClass('sidebar-left-closed')

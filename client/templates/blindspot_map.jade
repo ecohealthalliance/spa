@@ -21,33 +21,15 @@ template(name='blindspotMap')
       .sidebar-pane.active
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
-          p 
-          | This map shows the number of mentions per capita of each country on ProMED-mail feeds.
-          | Currently only the main feed is used.
-          | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
+          p This map shows the number of mentions per capita of each country on ProMED-mail feeds. Currently only the main feed is used. Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
+
           .slider-wrapper
             .slider-heading
-              h3 Date Range
-            p #{startDate} through #{endDate}
-            if intervalGreaterThanOneDay
-              +slider sliderMin=intervalStartDate sliderMax=intervalEndDate
-          .filter-row
-            .filter-group
-              label.filter-label Range Start
-              .input-group.date#intervalStartDate
-                input.date-button.form-control.input-sm(value="{{formattedIntervalStartDate}}" type="text")
-                .input-group-addon
-                  span.glyphicon.glyphicon-calendar
-          .filter-row
-            .filter-group
-              label.filter-label Range End
-              .input-group.date#intervalEndDate
-                input.date-button.form-control.input-sm(value="{{formattedIntervalEndDate}}" type="text")
-                .input-group-addon
-                  span.glyphicon.glyphicon-calendar
-          p
-          | This analysis is based on data from #{minDate} through #{maxDate}.
-          | The date range slider cannot be extended beyond that interval.
+              h3 Year Range
+              span.heading-details #{startYear} to #{endYear}
+            
+            +slider sliderMin=minYear sliderMax=maxYear
+  
   #tableSidebar.sidebarRight.collapsed
     ul.sidebar-tabs.right
       li#sidebar-table-tab
