@@ -1,23 +1,20 @@
 template(name="spaTable")
-  div.tab-content.dataTableContent
+  .tab-content.dataTableContent
     if ready
-      div#paths.tab-pane.active
-        div.tab-content.pathsTableContainer
-          div.risk-analysis-container
-            div.datatable-heading.datatable-row Between
-          div.datatable-hr
-          div.datatable-row
-            div.datatable-row
-              div.col.col-xs-2 {{startYear}}
-              div.col.col-xs-2 and
-              div.col.col-xs-8 {{endYear}}
-          div.datatable-hr
+      #paths.tab-pane.active
+        .tab-content.pathsTableContainer
+          .risk-analysis-container
+            .datatable-heading.datatable-row Between
+              span.year {{startYear}}
+              span and
+              span.year {{endYear}}
+          .datatable-hr
           table#exploreTable.table.dataTable.tablesorter.tablesorter-default(role="grid")
             thead
               tr.tablesorter-headerRow(role="row")
                 each cells
-                  th.tablesorter-header.tablesorter-headerUnSorted(data-column="0" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="exploreTable" unselectable="on" aria-sort="{{name}}" aria-label="Origin: No sort applied, activate to apply an ascending sort" style="-webkit-user-select: none;")
-                    div.tablesorter-header-inner= title
+                  th.tablesorter-header.tablesorter-headerUnSorted(class="{{sortDirectionClass}}" data-column="0" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="exploreTable" unselectable="on" aria-sort="{{name}}" aria-label="Origin: No sort applied, activate to apply an ascending sort" style="-webkit-user-select: none;")
+                    .tablesorter-header-inner= title
             tbody(aria-live="polite" aria-relevant="all")
               if data
                 each data
@@ -27,15 +24,17 @@ template(name="spaTable")
                     td= population
                     td= mentionsPerCapita
               else
-                tr.row
-                  td(colspan="12")
-                    span(style="font-style: italic;") No data
+                tr.row.empty
+                  td(colspan="4")
+                    span No data
     else
-      |...
+      .loading.small.space-top-3
+        .loading-spinner
+        .loading-text Loading
 
   if ready
-    div.sidebarRightFooter
-      div.export
+    .sidebarRightFooter
+      .export
         i.fa.fa-cloud-download.downloadIcon
         button.btn.btn-sm.btn-default.exportData(data-type="json") JSON
         button.btn.btn-sm.btn-default.exportData(data-type="csv") CSV
