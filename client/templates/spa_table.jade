@@ -4,13 +4,7 @@ template(name="spaTable")
       div#paths.tab-pane.active
         div.tab-content.pathsTableContainer
           div.risk-analysis-container
-            div.datatable-heading.datatable-row Between
-          div.datatable-hr
-          div.datatable-row
-            div.datatable-row
-              div.col.col-xs-2 {{startYear}}
-              div.col.col-xs-2 and
-              div.col.col-xs-8 {{endYear}}
+            div.datatable-heading.datatable-row {{startDate}} through {{endDate}}
           div.datatable-hr
           table#exploreTable.table.dataTable.tablesorter.tablesorter-default(role="grid")
             thead
