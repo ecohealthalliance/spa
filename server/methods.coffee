@@ -1,24 +1,30 @@
 Meteor.methods
-  aggregateMentionsOverYearRange: (startYear, endYear)->
-    countries = {}
-    Blindspots.find(
-      $and: [
-        {
-          year:
-            $gte: startYear
+  aggregateMentionsOverDateRange: (startDate, endDate)->
+    result = Posts.aggregate([
+      {
+        "$match": {
+          "$and": [
+            {
+              "promedDate" : { "$gte": startDate }
+            },
+            {
+              "promedDate" : { "$lte": endDate }
+            }
+          ]
         }
-        {
-          year:
-            $lt: endYear
+      },
+      { "$unwind" : "$articles" },
+      { "$unwind": "$articles.geoannotations" },
+      {
+        "$group" : {
+            "_id" : "$articles.geoannotations.country code",
+            "mentions" : { "$sum" : 1 }
         }
-      ]
-    ).map (countryInYear)->
-      unless countries[countryInYear.ISO]
-        countries[countryInYear.ISO] = {name: countryInYear.Country, mentions: 0}
-      countries[countryInYear.ISO].mentions += countryInYear.mentions
-      countries[countryInYear.ISO].population = countryInYear.Population
-      countries[countryInYear.ISO].mentionsPerCapita = countries[countryInYear.ISO].mentions / countries[countryInYear.ISO].population
-    return countries
+      }
+    ])
+    return _.object(result.map((country)->
+      [country._id, country.mentions]
+    ))
   getPostsDateRange: ->
     result = Posts.aggregate([
       {
