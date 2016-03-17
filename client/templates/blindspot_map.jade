@@ -21,10 +21,10 @@ template(name='blindspotMap')
       .sidebar-pane.active
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
-          p 
-          | This map shows the number of mentions per capita of each country on ProMED-mail feeds.
+          p
+          | This map shows the number of mentions per capita of each country on ProMED-mail feeds. 
           | Currently only the main feed is used.
-          | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
+          | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a    country as a mention of that country.
           .slider-wrapper
             .slider-heading
               h3 Date Range
@@ -45,7 +45,7 @@ template(name='blindspotMap')
                 input.date-button.form-control.input-sm(value="{{formattedIntervalEndDate}}" type="text")
                 .input-group-addon
                   span.glyphicon.glyphicon-calendar
-          p
+          p.details
           | This analysis is based on data from #{minDate} through #{maxDate}.
           | The date range slider cannot be extended beyond that interval.
   #tableSidebar.sidebarRight.collapsed
