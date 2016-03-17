@@ -11,10 +11,10 @@ Template.spaTable.onCreated ->
       @countries.insert(country)
     @ready.set(true)
 Template.spaTable.helpers
-  startDate: ->
-    Session.get('startDate').toLocaleDateString()
-  endDate: ->
-    Session.get('endDate').toLocaleDateString()
+  startYear: ->
+    Session.get('startYear')
+  endYear: ->
+    Session.get('endYear')
   cells: ->
     [
       { name: 'name', title: "Country" },

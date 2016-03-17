@@ -8,8 +8,7 @@ with open("world-med-orig.geo.json") as f:
     for country_feature in world['features']:
         country_feature['properties'] = {
             'ISO2': country_feature['properties']['iso_a2'],
-            'name': country_feature['properties']['name'],
-            'population': country_feature['properties']['pop_est']
+            'name': country_feature['properties']['name']
         }
         out_features.append(country_feature)
     world['features'] = out_features
