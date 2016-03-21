@@ -4,10 +4,7 @@ template(name="spaTable")
       #paths.tab-pane.active
         .tab-content.pathsTableContainer
           .risk-analysis-container
-            .datatable-heading.datatable-row Between
-              span.year {{startYear}}
-              span and
-              span.year {{endYear}}
+            .datatable-heading.datatable-row {{startDate}} through {{endDate}}
           .datatable-hr
           table#exploreTable.table.dataTable.tablesorter.tablesorter-default(role="grid")
             thead
