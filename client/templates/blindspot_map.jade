@@ -57,3 +57,11 @@ template(name='blindspotMap')
     .sidebar-content
       #sidebar-table.sidebar-pane 
         +spaTable aggregatedCountryData=aggregatedCountryData
+
+template(name='legend')
+  .heading Mentions per million residents per year
+  .values
+    each values
+      i(style="background:#{color}")
+      | #{value}
+      br

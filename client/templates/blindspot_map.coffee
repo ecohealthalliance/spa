@@ -1,3 +1,7 @@
+COLOR_CONSTANT = 20000000000000000
+round = (num, positions)->
+  magnitude = Math.pow(10, positions)
+  Math.round(magnitude * num) / magnitude
 centerLoadingSpinner = ->
   loadingContainerWidth = $('.loading-content').width() or 100
   leftSideBarWidth = $('#sidebar').width()
@@ -87,6 +91,25 @@ Template.blindspotMap.onRendered ->
     maxZoom: 18
   }).addTo(@lMap)
 
+  ramp = chroma.scale(["#9e5324", "#F8ECE0"]).colors(10)
+
+  legend = L.control(position: 'bottomright')
+  legend.onAdd = (map)->
+    @_div = L.DomUtil.create('div', 'info legend')
+    @update()
+  legend.update = ()->
+    $(@_div).html(
+      Blaze.toHTMLWithData(Template.legend, {
+        values: _.range(0, ramp.length, 2).reverse().map (idx)->
+          value: round((Math.exp(idx / ramp.length) - 1) * 1000000 * (
+            1000 * 60 * 60 * 24 * 365 # 1 year in milliseconds
+          ) / COLOR_CONSTANT, 2)
+          color: ramp[idx]
+      })
+    )
+    @_div
+  legend.addTo(@lMap)
+
   sidebar = L.control.sidebar('sidebar').addTo(@lMap)
   tableSidebar = L.control.sidebar('tableSidebar').addTo(@lMap)
   @geoJsonFeaturesPromise.then ({features: geoJsonFeatures})=>
@@ -94,14 +117,13 @@ Template.blindspotMap.onRendered ->
     getColor = (val)->
       # return a color from the ramp based on a 0 to 1 value.
       # If the value exceeds one the last stop is used.
-      ramp = chroma.scale(["#9e5324", "#F8ECE0"]).colors(10)
-      ramp[Math.floor(10 * Math.max(0, Math.min(val, 0.99)))]
+      ramp[Math.floor(ramp.length * Math.max(0, Math.min(val, 0.99)))]
     addCommas = (num)=>
       num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     style = (feature)=>
       fillColor: getColor(
         Math.log(
-          1 + 20000000000000000 * (aggregatedCountryData[feature.properties.ISO2]?.mentionsPerCapita) / (
+          1 + COLOR_CONSTANT * (aggregatedCountryData[feature.properties.ISO2]?.mentionsPerCapita) / (
             (Session.get('endDate') - Session.get('startDate'))
           )
         )
