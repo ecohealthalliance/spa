@@ -69,6 +69,18 @@ $slider-BG = darken($l-gray, 2%)
 
   .noUi-draggable
     cursor ew-resize
+    &.not-draggable
+      cursor default
+    .noUI-adjustRange
+      position absolute
+      top 50%
+      left 50%
+      transform translate(-50%,-50%)
+      &::before
+        icon()
+        content '\f07e'
+        display block
+        color darken($active, 20%)
 
   .noUi-connect
     background $active
@@ -84,3 +96,10 @@ $slider-BG = darken($l-gray, 2%)
   border 0
   background $slider-BG
   box-shadow none
+
+.filter-group
+  margin-bottom 10px
+
+.details
+  margin-top 20px
+  color $d-gray
