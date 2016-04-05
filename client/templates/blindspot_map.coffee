@@ -100,7 +100,7 @@ Template.blindspotMap.onRendered ->
   legend.update = ()->
     $(@_div).html(
       Blaze.toHTMLWithData(Template.legend, {
-        values: _.range(0, ramp.length, 2).reverse().map (idx)->
+        values: _.range(0, ramp.length, 2).map (idx)->
           value: round((Math.exp(idx / ramp.length) - 1) * 1000000 * (
             1000 * 60 * 60 * 24 * 365 # 1 year in milliseconds
           ) / COLOR_CONSTANT, 2)
