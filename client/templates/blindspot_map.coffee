@@ -40,7 +40,7 @@ Template.blindspotMap.onCreated ->
   Session.set('endDate', new Date('1/1/2000'))
   @geoJsonFeatures = new ReactiveVar []
   @mapLoading = new ReactiveVar true
-  @geoJsonFeaturesPromise = $.getJSON("world.geo.json")
+  @geoJsonFeaturesPromise = $.getJSON("/world.geo.json")
     .fail (e)->
       console.log e
   @minDate = new ReactiveVar truncateDateToStart(new Date('1/1/1994'))
