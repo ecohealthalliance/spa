@@ -22,9 +22,9 @@ template(name='blindspotMap')
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
           p
-          | This map shows the number of mentions per capita of each country on ProMED-mail feeds. 
+          | This map shows the number of mentions per capita of each country on ProMED-mail feeds.
           | Currently only the main feed is used.
-          | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a    country as a mention of that country.
+          | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
           .slider-wrapper
             .slider-heading
               h3 Date Range
@@ -55,5 +55,13 @@ template(name='blindspotMap')
           i.fa.fa-angle-double-left.fa-white-arrow
           i.fa.fa-table.fa-white-table
     .sidebar-content
-      #sidebar-table.sidebar-pane 
+      #sidebar-table.sidebar-pane
         +spaTable aggregatedCountryData=aggregatedCountryData
+
+template(name='legend')
+  h4 Mentions per million residents per year
+  .values
+    each values
+      .value
+        .value--key(style="background:#{color}")
+        .value--value #{value}
