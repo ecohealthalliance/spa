@@ -33,6 +33,36 @@ truncateDateToEnd = (d)->
   d
 
 Template.blindspotMap.onCreated ->
+  @feeds = new Meteor.Collection(null)
+  [
+      tags: ["AH", "EDR"]
+      label: "Primary"
+      checked: true
+    ,
+      tags: ["PORT"]
+      label: "Português"
+    ,
+      tags: ["ESP"]
+      label: "Español"
+    ,
+      tags: ["RUS"]
+      label: "Русский"
+    ,
+      tags: ["MBDS"]
+      label: "Mekong Basin"
+    ,
+      tags: ["FRA"]
+      label: "Afrique Francophone"
+    ,
+      tags: ["EAFR"]
+      label: "Anglophone Africa"
+    ,
+      tags: ["SOAS"]
+      label: "South Asia"
+    ,
+      tags: ["MENA"]
+      label: "Middle East/North Africa"
+  ].forEach((feed)=>@feeds.insert(feed))
   @aggregatedCountryDataRV = new ReactiveVar {}
   @sideBarLeftOpen = new ReactiveVar true
   @sideBarRightOpen = new ReactiveVar false
@@ -55,6 +85,7 @@ Template.blindspotMap.onCreated ->
     @intervalEndDate.set endDate
 
 Template.blindspotMap.onRendered ->
+  @$('[data-toggle="tooltip"]').tooltip()
   @autorun =>
     @$('#intervalStartDate').data('DateTimePicker')?.destroy()
     @$('#intervalStartDate').datetimepicker(
@@ -199,9 +230,13 @@ Template.blindspotMap.onRendered ->
       watchWindowChange()
 
     @autorun =>
+      console.log @feeds.find().fetch()
       Meteor.call(
         'aggregateMentionsOverDateRange',
         Session.get('startDate'), Session.get('endDate'),
+        _.flatten(
+          @feeds.find().map((feed)-> if feed.checked then feed.tags else [])
+        ),
         (err, mentionsByCountry)=>
           if err
             throw err
@@ -241,6 +276,9 @@ Template.blindspotMap.helpers
     Template.instance().mapLoading.get()
   aggregatedCountryData: ->
     Template.instance().aggregatedCountryDataRV
+  feeds: ->
+    Template.instance().feeds.find()
+
 Template.blindspotMap.events
   'click #sidebar-plus-button': (event, instance) ->
     instance.lMap.zoomIn()
@@ -265,3 +303,6 @@ Template.blindspotMap.events
     sideBarRightOpen = instance.sideBarRightOpen.get()
     $('body').toggleClass('sidebar-right-closed')
     instance.sideBarRightOpen.set not sideBarRightOpen
+  'click .feed input': (event, instance) ->
+    console.log(event.target.checked)
+    instance.feeds.update(@_id, $set: {checked:event.target.checked})
