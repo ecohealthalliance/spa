@@ -15,18 +15,16 @@ template(name='blindspotMap')
       button#sidebar-plus-button.sidebar-zoom-in.fa.fa-plus.btn.btn-sm
       button#sidebar-minus-button.sidebar-zoom-out.fa.fa-minus.btn.btn-sm
 
-
     // Tab panes
     .sidebar-content
       .sidebar-pane.active
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
           p
-          | This map shows the number of mentions per capita of each country on ProMED-mail feeds.
-          | Currently only the main feed is used.
-          | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
-          .slider-wrapper
-            .slider-heading
+            | This map shows the number of mentions per capita of each country on ProMED-mail feeds.
+            | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
+          .control-wrapper
+            .heading
               h3 Date Range
             p #{startDate} through #{endDate}
             if intervalGreaterThanOneDay
@@ -34,6 +32,11 @@ template(name='blindspotMap')
           .filter-row
             .filter-group
               label.filter-label Range Start
+                i.fa.fa-question-circle.help-btn(
+                  type="button"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="This analysis is based on data from #{minDate} through #{maxDate}. The date range slider cannot be extended beyond that interval.")
               .input-group.date#intervalStartDate
                 input.date-button.form-control.input-sm(value="{{formattedIntervalStartDate}}" type="text")
                 .input-group-addon
@@ -45,9 +48,13 @@ template(name='blindspotMap')
                 input.date-button.form-control.input-sm(value="{{formattedIntervalEndDate}}" type="text")
                 .input-group-addon
                   span.glyphicon.glyphicon-calendar
-          p.details
-          | This analysis is based on data from #{minDate} through #{maxDate}.
-          | The date range slider cannot be extended beyond that interval.
+          .control-wrapper
+            .heading
+              h3 Feeds
+            each feeds
+              .feed
+                input(type="checkbox" checked=checked)
+                span=label
   #tableSidebar.sidebarRight.collapsed
     ul.sidebar-tabs.right
       li#sidebar-table-tab

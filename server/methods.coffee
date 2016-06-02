@@ -1,24 +1,25 @@
 Meteor.methods
-  aggregateMentionsOverDateRange: (startDate, endDate)->
+  aggregateMentionsOverDateRange: ({startDate, endDate, feedIds})->
     result = Posts.aggregate([
       {
         "$match": {
+          "feedId": { "$in": feedIds }
           "$and": [
             {
-              "promedDate" : { "$gte": startDate }
+              "promedDate": { "$gte": startDate }
             },
             {
-              "promedDate" : { "$lte": endDate }
+              "promedDate": { "$lte": endDate }
             }
           ]
         }
       },
-      { "$unwind" : "$articles" },
+      { "$unwind": "$articles" },
       { "$unwind": "$articles.geoannotations" },
       {
-        "$group" : {
-            "_id" : "$articles.geoannotations.country code",
-            "mentions" : { "$sum" : 1 }
+        "$group": {
+          "_id": "$articles.geoannotations.country code",
+          "mentions": { "$sum": 1 }
         }
       }
     ])

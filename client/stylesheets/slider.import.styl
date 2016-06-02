@@ -1,23 +1,25 @@
 $slider-BG = darken($l-gray, 2%)
 
-.slider-wrapper
-  margin 50px 0
+.control-wrapper
+  margin 20px 0
+  .heading
+    display flex
+    align-items baseline
+    justify-content space-between
+    h3
+      margin 0 0 10px 0
+      font-size 1.2em
+      font-weight 800
+      display inline-block
+    .heading-details
+      vertical-align baseline
+      font-size .95em
+      font-weight 400
+      color $d-gray
+      text-align right
 
-.slider-heading
-  display flex
-  align-items baseline
-  justify-content space-between
-  h3
-    margin 0 0 10px 0
-    font-size 1.2em
-    font-weight 800
-    display inline-block
-  .heading-details
-    vertical-align baseline
-    font-size .95em
-    font-weight 400
-    color $d-gray
-    text-align right
+#slider
+  margin-bottom 40px
 
 .noUi-horizontal
   .noUi-handle
