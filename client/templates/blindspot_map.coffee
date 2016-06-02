@@ -235,14 +235,10 @@ Template.blindspotMap.onRendered ->
       countryLayers.forEach (layer)=>
         @geoJsonLayer.resetStyle(layer)
 
-    @autorun ->
-      Session.get('startDate')
-      Session.get('endDate')
+    @autorun =>
       instance.mapLoading.set true
       centerLoadingSpinner()
       watchWindowChange()
-
-    @autorun =>
       Meteor.call('aggregateMentionsOverDateRange', {
         startDate: Session.get('startDate')
         endDate: Session.get('endDate')
