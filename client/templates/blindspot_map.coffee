@@ -35,31 +35,40 @@ truncateDateToEnd = (d)->
 Template.blindspotMap.onCreated ->
   @feeds = new Meteor.Collection(null)
   [
+      _id: "1"
       tags: ["AH", "EDR"]
-      label: "Primary"
+      label: "English"
       checked: true
     ,
-      tags: ["PORT"]
-      label: "Português"
-    ,
+      _id: "7"
       tags: ["ESP"]
       label: "Español"
     ,
+      _id: "12"
       tags: ["RUS"]
       label: "Русский"
     ,
+      _id: "15"
       tags: ["MBDS"]
       label: "Mekong Basin"
     ,
+      _id: "18"
       tags: ["FRA"]
       label: "Afrique Francophone"
     ,
+      _id: "24"
       tags: ["EAFR"]
       label: "Anglophone Africa"
     ,
+      _id: "26"
+      tags: ["PORT"]
+      label: "Português"
+    ,
+      _id: "170"
       tags: ["SOAS"]
       label: "South Asia"
     ,
+      _id: "171"
       tags: ["MENA"]
       label: "Middle East/North Africa"
   ].forEach((feed)=>@feeds.insert(feed))
@@ -144,6 +153,10 @@ Template.blindspotMap.onRendered ->
   sidebar = L.control.sidebar('sidebar').addTo(@lMap)
   tableSidebar = L.control.sidebar('tableSidebar').addTo(@lMap)
   @geoJsonFeaturesPromise.then ({features: geoJsonFeatures})=>
+    # For countries without an ISO2 code use their name instead
+    for feature in geoJsonFeatures
+      if feature.properties.ISO2 == "-99"
+        feature.properties.ISO2 = "NoISO2:" + feature.properties.name
     aggregatedCountryData = {}
     getColor = (val)->
       # return a color from the ramp based on a 0 to 1 value.
@@ -230,25 +243,35 @@ Template.blindspotMap.onRendered ->
       watchWindowChange()
 
     @autorun =>
-      console.log @feeds.find().fetch()
-      Meteor.call(
-        'aggregateMentionsOverDateRange',
-        Session.get('startDate'), Session.get('endDate'),
-        _.flatten(
-          @feeds.find().map((feed)-> if feed.checked then feed.tags else [])
-        ),
-        (err, mentionsByCountry)=>
+      Meteor.call('aggregateMentionsOverDateRange', {
+        startDate: Session.get('startDate')
+        endDate: Session.get('endDate')
+        feedIds: _.flatten(
+          @feeds.find().map((feed)-> if feed.checked then [feed._id] else [])
+        )
+      }, (err, mentionsByCountry)=>
           if err
             throw err
-          aggregatedCountryData = _.object geoJsonFeatures.map (feature)->
-            {properties: {ISO2, population, name}} = feature
-            mentions = mentionsByCountry[ISO2] or 0
-            [ISO2, {
-              name: name
-              population: population
-              mentions: mentions
-              mentionsPerCapita: mentions / population
-            }]
+          groupedCountryData = _.chain(geoJsonFeatures)
+            .map((feature)->
+              {properties: {ISO2, population, name}} = feature
+              mentions = mentionsByCountry[ISO2] or 0
+              {
+                name: name
+                ISO2: ISO2
+                population: population
+                mentions: mentions
+                mentionsPerCapita: mentions / population
+              }
+            )
+            .groupBy("ISO2")
+            .value()
+          aggregatedCountryData = {}
+          for ISO2, features of groupedCountryData
+            if features.length > 1
+              console.log ISO2 + " has multiple features associated with it."
+              console.log features
+            aggregatedCountryData[ISO2] = features[0]
           @aggregatedCountryDataRV.set aggregatedCountryData
           updateMap()
       )
@@ -304,5 +327,4 @@ Template.blindspotMap.events
     $('body').toggleClass('sidebar-right-closed')
     instance.sideBarRightOpen.set not sideBarRightOpen
   'click .feed input': (event, instance) ->
-    console.log(event.target.checked)
     instance.feeds.update(@_id, $set: {checked:event.target.checked})
