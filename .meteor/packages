@@ -33,3 +33,4 @@ tsega:bootstrap3-datetimepicker@4.17.37_1
 kadira:flow-router
 standard-minifier-js
 kadira:blaze-layout
+momentjs:moment
