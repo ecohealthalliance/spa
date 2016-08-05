@@ -48,13 +48,7 @@ template(name='blindspotMap')
                 input.date-button.form-control.input-sm(value="{{formattedIntervalEndDate}}" type="text")
                 .input-group-addon
                   span.glyphicon.glyphicon-calendar
-          .control-wrapper
-            .heading
-              h3 Feeds
-            each feeds
-              .feed
-                input(type="checkbox" checked=checked)
-                span=label
+          +feeds
   #tableSidebar.sidebarRight.collapsed
     ul.sidebar-tabs.right
       li#sidebar-table-tab

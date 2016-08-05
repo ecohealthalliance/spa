@@ -1,3 +1,22 @@
+recomputePostsDateRange = ->
+  result = Posts.aggregate([
+    {
+      $group:
+        _id: null
+        startDate:
+          $min: "$promedDate"
+        endDate:
+          $max: "$promedDate"
+    }
+  ])
+  return [result[0].startDate, result[0].endDate]
+postDateRange = recomputePostsDateRange()
+# Update postDateRange hourly
+setInterval(->
+  console.log "Updating postDateRange"
+  postDateRange = recomputePostsDateRange()
+, 60 * 1000 * 60)
+
 Meteor.methods
   aggregateMentionsOverDateRange: ({startDate, endDate, feedIds})->
     result = Posts.aggregate([
@@ -27,14 +46,4 @@ Meteor.methods
       [country._id, country.mentions]
     ))
   getPostsDateRange: ->
-    result = Posts.aggregate([
-      {
-        $group:
-          _id: null
-          startDate:
-            $min: "$promedDate"
-          endDate:
-            $max: "$promedDate"
-      }
-    ])
-    return [result[0].startDate, result[0].endDate]
+    return postDateRange
