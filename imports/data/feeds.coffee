@@ -7,11 +7,11 @@ Feeds = new Meteor.Collection(null)
 ,
   _id: "7"
   tags: ["ESP"]
-  label: "Español"
+  label: "Español (Spanish)"
 ,
   _id: "12"
   tags: ["RUS"]
-  label: "Русский"
+  label: "Русский (Russian)"
 ,
   _id: "15"
   tags: ["MBDS"]

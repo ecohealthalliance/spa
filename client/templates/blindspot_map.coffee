@@ -134,7 +134,7 @@ Template.blindspotMap.onRendered ->
       )
       weight: 1
       opacity: 1
-      color: '#CDD2D4'
+      color: '#DDDDDD'
       dashArray: '3'
       fillOpacity: 0.75
     zoomToFeature = (e)=>

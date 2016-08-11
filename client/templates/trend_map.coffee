@@ -44,7 +44,7 @@ Template.trendMap.onRendered ->
     maxZoom: 18
   }).addTo(@lMap)
 
-  ramp = chroma.scale(["#ff0000", '#cdd2d4', '#cdd2d4', "#00ff00"]).colors(10)
+  ramp = chroma.scale(["#ff0000", '#dddddd', '#dddddd', "#00ff00"]).colors(10)
 
   sidebar = L.control.sidebar('sidebar').addTo(@lMap)
   @geoJsonFeaturesPromise.then ({features: geoJsonFeatures})=>
@@ -71,7 +71,7 @@ Template.trendMap.onRendered ->
         fillColor: getColor(normalizedScore)
         weight: 1
         opacity: 1
-        color: '#CDD2D4'
+        color: '#DDDDDD'
         dashArray: '3'
         fillOpacity: 0.75
       }

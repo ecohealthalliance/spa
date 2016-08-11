@@ -64,7 +64,7 @@ Meteor.methods
         }
       },
       { "$unwind": "$articles" },
-      { 
+      {
         "$project": {
           "articles.geoannotations": 1,
           "recent": {
