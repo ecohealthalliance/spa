@@ -23,6 +23,7 @@ template(name='blindspotMap')
           p
             | This map shows the number of mentions per capita of each country on ProMED-mail feeds.
             | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
+          a(href="/trending") View trending countries
           .control-wrapper
             .heading
               h3 Date Range
@@ -48,13 +49,7 @@ template(name='blindspotMap')
                 input.date-button.form-control.input-sm(value="{{formattedIntervalEndDate}}" type="text")
                 .input-group-addon
                   span.glyphicon.glyphicon-calendar
-          .control-wrapper
-            .heading
-              h3 Feeds
-            each feeds
-              .feed
-                input(type="checkbox" checked=checked)
-                span=label
+          +feeds
   #tableSidebar.sidebarRight.collapsed
     ul.sidebar-tabs.right
       li#sidebar-table-tab

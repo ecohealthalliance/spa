@@ -1,17 +1,9 @@
+Feeds = require '/imports/data/feeds.coffee'
+
 COLOR_CONSTANT = 20000000000000000
 round = (num, positions)->
   magnitude = Math.pow(10, positions)
   Math.round(magnitude * num) / magnitude
-centerLoadingSpinner = ->
-  loadingContainerWidth = $('.loading-content').width() or 100
-  leftSideBarWidth = $('#sidebar').width()
-  rightSideBarWidth = $('.sidebarRight .sidebar-content').width()
-  mapViewWidth = $(document).width() - leftSideBarWidth
-  loadingSpinnerPosition = mapViewWidth / 2 - loadingContainerWidth / 2 + rightSideBarWidth / 2
-  $('.loading-content').css 'right', "#{loadingSpinnerPosition}px"
-watchWindowChange = ->
-  $(window).resize ->
-    centerLoadingSpinner()
 
 formatDate = (d)->
   day = ('0' + d.getDate()).slice(-2)
@@ -33,45 +25,6 @@ truncateDateToEnd = (d)->
   d
 
 Template.blindspotMap.onCreated ->
-  @feeds = new Meteor.Collection(null)
-  [
-      _id: "1"
-      tags: ["AH", "EDR"]
-      label: "English"
-      checked: true
-    ,
-      _id: "7"
-      tags: ["ESP"]
-      label: "Español"
-    ,
-      _id: "12"
-      tags: ["RUS"]
-      label: "Русский"
-    ,
-      _id: "15"
-      tags: ["MBDS"]
-      label: "Mekong Basin"
-    ,
-      _id: "18"
-      tags: ["FRA"]
-      label: "Afrique Francophone"
-    ,
-      _id: "24"
-      tags: ["EAFR"]
-      label: "Anglophone Africa"
-    ,
-      _id: "26"
-      tags: ["PORT"]
-      label: "Português"
-    ,
-      _id: "170"
-      tags: ["SOAS"]
-      label: "South Asia"
-    ,
-      _id: "171"
-      tags: ["MENA"]
-      label: "Middle East/North Africa"
-  ].forEach((feed)=>@feeds.insert(feed))
   @aggregatedCountryDataRV = new ReactiveVar {}
   @sideBarLeftOpen = new ReactiveVar true
   @sideBarRightOpen = new ReactiveVar false
@@ -108,9 +61,16 @@ Template.blindspotMap.onRendered ->
       minDate: truncateDateToStart @minDate.get()
       maxDate: truncateDateToEnd @maxDate.get()
     )
-  
+  centerLoadingSpinner = ->
+    loadingContainerWidth = $('.loading-content').width() or 100
+    leftSideBarWidth = $('#sidebar').width()
+    rightSideBarWidth = $('.sidebarRight .sidebar-content').width()
+    mapViewWidth = $(document).width() - leftSideBarWidth
+    loadingSpinnerPosition = mapViewWidth / 2 - loadingContainerWidth / 2 + rightSideBarWidth / 2
+    $('.loading-content').css 'right', "#{loadingSpinnerPosition}px"
   centerLoadingSpinner()
-  watchWindowChange()
+  $(window).resize ->
+    centerLoadingSpinner()
   instance = @
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
   @lMap = L.map("blindspot-map", zoomControl: false).setView([49.25044, -123.137], 4)
@@ -174,7 +134,7 @@ Template.blindspotMap.onRendered ->
       )
       weight: 1
       opacity: 1
-      color: '#CDD2D4'
+      color: '#DDDDDD'
       dashArray: '3'
       fillOpacity: 0.75
     zoomToFeature = (e)=>
@@ -238,12 +198,11 @@ Template.blindspotMap.onRendered ->
     @autorun =>
       instance.mapLoading.set true
       centerLoadingSpinner()
-      watchWindowChange()
       Meteor.call('aggregateMentionsOverDateRange', {
         startDate: Session.get('startDate')
         endDate: Session.get('endDate')
         feedIds: _.flatten(
-          @feeds.find().map((feed)-> if feed.checked then [feed._id] else [])
+          Feeds.find().map((feed)-> if feed.checked then [feed._id] else [])
         )
       }, (err, mentionsByCountry)=>
           if err
@@ -295,8 +254,6 @@ Template.blindspotMap.helpers
     Template.instance().mapLoading.get()
   aggregatedCountryData: ->
     Template.instance().aggregatedCountryDataRV
-  feeds: ->
-    Template.instance().feeds.find()
 
 Template.blindspotMap.events
   'click #sidebar-plus-button': (event, instance) ->
@@ -322,5 +279,3 @@ Template.blindspotMap.events
     sideBarRightOpen = instance.sideBarRightOpen.get()
     $('body').toggleClass('sidebar-right-closed')
     instance.sideBarRightOpen.set not sideBarRightOpen
-  'click .feed input': (event, instance) ->
-    instance.feeds.update(@_id, $set: {checked:event.target.checked})

@@ -1,0 +1,36 @@
+template(name='trendMap')
+  #blindspot-map.map
+    .loading(class="{{#unless loading}} hiddenLoader {{/unless}}")
+      .loading-content
+        if loading
+          i.loading-spinner
+          h1.loading-text Loading
+
+  #sidebar.sidebar.sidebar-left.sidebar-main
+    // Nav tabs
+    ul.sidebar-tabs
+      li#sidebar-collapse-tab
+        a(href='#sidebar-search-and-advanced-filter' role='tab')
+          i.fa.fa-chevron-circle-left.fa-white
+      button#sidebar-plus-button.sidebar-zoom-in.fa.fa-plus.btn.btn-sm
+      button#sidebar-minus-button.sidebar-zoom-out.fa.fa-minus.btn.btn-sm
+
+    // Tab panes
+    .sidebar-content
+      .sidebar-pane.active
+        h1.logo Surveillance Paucity Analysis
+        .sidebar-pane-content
+          p
+            | This map shows the trending countries on ProMED-mail feeds.
+            | Countries with a relatively large increase in mentions per capita
+            | are shown in green, while countries with a large decrease are shown
+            | in red.
+          a(href="/") View mentions per capita map
+          .control-wrapper
+            .heading
+              h3 Time interval
+            select#trendingRange.form-control
+              option(value="week" selected) Week
+              option(value="month") Month
+              option(value="year") Year
+          +feeds
