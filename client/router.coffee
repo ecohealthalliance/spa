@@ -1,5 +1,6 @@
 # The router is needed to make the google analytics plug-in work.
-BlazeLayout.setRoot('body');
+BlazeLayout.setRoot('body')
+
 FlowRouter.route '/',
   name: 'splashPage'
   action: ->

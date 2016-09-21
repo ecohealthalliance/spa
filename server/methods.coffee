@@ -9,8 +9,11 @@ recomputePostsDateRange = ->
           $max: "$promedDate"
     }
   ])
-  return [result[0].startDate, result[0].endDate]
+  if result?[0]
+    return [result[0].startDate, result[0].endDate]
+
 postDateRange = recomputePostsDateRange()
+
 # Update postDateRange hourly
 setInterval(->
   console.log "Updating postDateRange"
