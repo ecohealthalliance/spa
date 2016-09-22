@@ -74,24 +74,8 @@ Template.blindspotMap.onRendered ->
   instance = @
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
   @lMap = L.map("blindspot-map", zoomControl: false).setView([49.25044, -123.137], 4)
-  layer = L.tileLayer('//cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-    attribution: """Map tiles by <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>,
-    under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
-    Data by <a href="http://www.openstreetmap.org/">OpenStreetMap</a>, under ODbL.
-    <br>
-    CRS:
-    <a href="http://wiki.openstreetmap.org/wiki/EPSG:3857" >
-    EPSG:3857
-    </a>,
-    Projection: Spherical Mercator""",
-    subdomains: 'abcd',
-    type: 'osm'
-    noWrap: true
-    minZoom: 1
-    maxZoom: 18
-  }).addTo(@lMap)
 
-  ramp = chroma.scale(["#9e5324", "#F8ECE0"]).colors(10)
+  ramp = chroma.scale(["#441152", "#3e5088", "#29928b", "#4bbf72"]).colors(10)
 
   legend = L.control(position: 'bottomright')
   legend.onAdd = (map)->
