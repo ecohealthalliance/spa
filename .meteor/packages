@@ -34,3 +34,4 @@ kadira:flow-router
 standard-minifier-js
 kadira:blaze-layout
 momentjs:moment
+meteorhacks:picker
