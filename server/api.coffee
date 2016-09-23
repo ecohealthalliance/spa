@@ -4,6 +4,7 @@ Meteor.startup ->
 Picker.route '/api/v1/search', (params, request, response, next) ->
   query = params.query
   searchText = query.text
+  notOneOfThese = query.not?.split(' ')
 
   response.setHeader('Content-Type', 'application/json')
 
@@ -11,9 +12,14 @@ Picker.route '/api/v1/search', (params, request, response, next) ->
     response.statusCode = 401
     response.end JSON.stringify { error: "No search text provided" }
 
-  posts = Posts.find({
+  mongoQuery = {
     $text: { $search: searchText }
-  }, {
+  }
+
+  if notOneOfThese?.length
+    mongoQuery.promedId = { $nin: notOneOfThese }
+
+  posts = Posts.find(mongoQuery, {
     fields:
       promedId: true
       'subject.raw': true
@@ -21,27 +27,6 @@ Picker.route '/api/v1/search', (params, request, response, next) ->
     limit: 5
     sort:
       score: { $meta: "textScore" }
-  }).fetch()
-
-  response.statusCode = 200
-  response.setHeader('Content-Type', 'application/json')
-  response.end JSON.stringify posts
-
-Picker.route '/api/v1/find', (params, request, response, next) ->
-  query = params.query
-  mongoQuery = query.q
-
-  response.setHeader('Content-Type', 'application/json')
-
-  unless mongoQuery
-    response.statusCode = 401
-    response.end JSON.stringify { error: "No query provided" }
-
-  queryObject = JSON.parse mongoQuery
-
-  posts = Posts.find(queryObject, {
-    fields: { 'promedId': true, 'subject.raw': true  }
-    limit: 5
   }).fetch()
 
   response.statusCode = 200
