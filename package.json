@@ -2,7 +2,7 @@
   "name": "SPA",
   "private": true,
   "dependencies": {
-    "highcharts": "^0.0.0",
+    "highcharts": "^4.2.7",
     "apidoc": "0.16.1"
   },
   "version": "0.0.1",
@@ -15,5 +15,5 @@
   "bugs": {
     "url": "https://github.com/ecohealthalliance/spa/issues"
   },
-  "homepage": "https://github.com/ecohealthalliance/spa",
+  "homepage": "https://github.com/ecohealthalliance/spa"
 }
