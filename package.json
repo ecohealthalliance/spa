@@ -1,0 +1,19 @@
+{
+  "name": "SPA",
+  "private": true,
+  "dependencies": {
+    "highcharts": "^0.0.0",
+    "apidoc": "0.16.1"
+  },
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ecohealthalliance/spa.git"
+  },
+  "author": "EcoHealth Alliance",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ecohealthalliance/spa/issues"
+  },
+  "homepage": "https://github.com/ecohealthalliance/spa",
+}

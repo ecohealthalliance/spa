@@ -12,3 +12,9 @@ FlowRouter.route '/trending',
   action: ->
     BlazeLayout.render 'layout',
       main: 'trendMap'
+
+FlowRouter.route '/reportingDelay',
+  name: 'reportingDelay'
+  action: ->
+    BlazeLayout.render 'layout',
+      main: 'reportingDelay'
