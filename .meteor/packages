@@ -20,7 +20,7 @@ ecmascript@0.5.7              # Enable ECMAScript2015+ syntax in app code
 ejson@1.0.12
 coffeescript@1.2.3
 reactive-var@1.0.10
-bevanhunt:leaflet@0.3.18
+bevanhunt:leaflet@3.0.1
 grits:flirt-sidebar
 flawless:meteor-toastr@1.0.1
 twbs:bootstrap@3.3.5

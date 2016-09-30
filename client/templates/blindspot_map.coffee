@@ -73,7 +73,10 @@ Template.blindspotMap.onRendered ->
     centerLoadingSpinner()
   instance = @
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
-  @lMap = L.map("blindspot-map", zoomControl: false).setView([49.25044, -123.137], 4)
+  @lMap = L.map("blindspot-map",
+    zoomControl: false
+    preferCanvas: true
+  ).setView([49.25044, -123.137], 4)
 
   ramp = chroma.scale(["#441152", "#3e5088", "#29928b", "#4bbf72"]).colors(10)
 

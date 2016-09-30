@@ -26,7 +26,10 @@ Template.trendMap.onRendered ->
 
   instance = @
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
-  @lMap = L.map("blindspot-map", zoomControl: false).setView([49.25044, -123.137], 4)
+  @lMap = L.map("blindspot-map",
+    zoomControl: false
+    preferCanvas: true
+  ).setView([49.25044, -123.137], 4)
 
   ramp = chroma.scale(["#ff0000", '#dddddd', '#dddddd', "#00ff00"]).colors(10)
 
