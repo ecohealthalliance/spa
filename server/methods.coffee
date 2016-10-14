@@ -15,7 +15,7 @@ recomputePostsDateRange = ->
 postDateRange = recomputePostsDateRange()
 
 # Update postDateRange hourly
-setInterval(->
+Meteor.setInterval(->
   console.log "Updating postDateRange"
   postDateRange = recomputePostsDateRange()
 , 60 * 1000 * 60)
