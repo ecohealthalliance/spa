@@ -18,9 +18,16 @@ template(name='blindspotMap')
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
           p
-            | This map shows the number of mentions per capita of each country on ProMED-mail feeds.
+            | This map shows statisitics about how often each country is
+            | mentioned on ProMED-mail to indicate areas in need of increased reporting.
             | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
-          a(href="/trending") View trending countries
+          p Data on deaths from communicable disease comes from the Global Burden of Disease dataset available
+            a(href="http://ghdx.healthdata.org/gbd-results-tool") here
+          a(href="/") Mentions per capita
+          br
+          a(href="/gbd") Mentions per death from communicable disease
+          br
+          a(href="/trending") Trending countries
           .control-wrapper
             .heading
               h3 Date Range
@@ -58,7 +65,7 @@ template(name='blindspotMap')
         +spaTable aggregatedCountryData=aggregatedCountryData
 
 template(name='legend')
-  h4 Mentions per million residents per year
+  h4 Mentions per million {{units}} per year
   .values
     each values
       .value
@@ -77,5 +84,8 @@ template(name='infoBox')
         li
           span Population:
           | {{addCommas countryData.population}}
+        li
+          span Communicable Disease Deaths in 2015:
+          | {{addCommas countryData.deathsPerYear}}
   else
     p Hover over a country to view its number of mentions and population.

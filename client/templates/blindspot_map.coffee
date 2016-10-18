@@ -59,6 +59,7 @@ Template.blindspotMap.onRendered ->
   legend.update = ()->
     $(@_div).html(
       Blaze.toHTMLWithData(Template.legend, {
+        units: if FlowRouter.getRouteName() == "globalBurdenOfDisease" then "deaths" else "residents"
         values: _.range(0, ramp.length, 2).map (idx)->
           value: utils.round(
             (idx / ramp.length) * medianValue * 1000000 / 0.5
@@ -154,20 +155,22 @@ Template.blindspotMap.onRendered ->
       aggregatedCountryData = {}
       aggregatedCountryData = _.chain(geoJsonFeatures)
         .map((feature)->
-          {properties: {ISO2, population, name}} = feature
+          {properties: {ISO2, population, name, deaths}} = feature
           mentions = mentionsByCountry[ISO2] or 0
           YEAR_IN_MILLIS = 1000 * 60 * 60 * 24 * 365
           timeIntervalYears = (
             Session.get('endDate') - Session.get('startDate')
           ) / YEAR_IN_MILLIS
+          estimatedDeathsOverInterval = Math.round(timeIntervalYears * deaths)
           return {
             name: name
             ISO2: ISO2
             population: population
+            deathsPerYear: Math.round(deaths)
             mentions: mentions
             mentionsPerCapita: mentions / population
-            mentionsPerCapitaPerYear: (mentions / population) / timeIntervalYears
-            mentionsPerDeathPerYear: null #TODO
+            mentionsPerCapitaPerYear: mentions / population / timeIntervalYears
+            mentionsPerDeathPerYear: mentions / estimatedDeathsOverInterval / timeIntervalYears
           }
         )
         .groupBy("ISO2")

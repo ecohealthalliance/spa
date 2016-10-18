@@ -2,6 +2,17 @@
 # Medium resolution is used because some countries in the large version are
 # missing iso codes.
 import json
+import csv
+import difflib
+gdb_data = {}
+with open("IHME-GBD_2015_DATA.csv") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        loc = row['location_name']
+        gdb_data[loc] = gdb_data.get(loc, {})
+        gdb_data[loc][row['measure_name'] + '.' + row['metric_name']] = gdb_data[loc].get(
+            row['measure_name'] + '.' + row['metric_name'], {})
+        gdb_data[loc][row['measure_name'] + '.' + row['metric_name']][row['cause_name']] = row
 with open("world-med-orig.geo.json") as f:
     world = json.load(f)
     out_features = []
@@ -14,10 +25,31 @@ with open("world-med-orig.geo.json") as f:
         # Ensure ISO2 is unique
         assert ISO2 not in ISO2set
         ISO2set.add(ISO2)
+        country_name = country_feature['properties']['name']
+        #print country_name
+        gdb_country_info = gdb_data.get(country_name)
+        if gdb_country_info is None:
+            max_size = 0
+            for key, value in gdb_data.items():
+                seqm = difflib.SequenceMatcher(None, key, country_name)
+                pos_a, pos_b, size = seqm.find_longest_match(0, len(key), 0, len(country_name)) 
+                if size > max_size and seqm.ratio() > 0.7:
+                    max_size = size
+                    gdb_country_info = value
+            #print gdb_country_info
+        deaths = None
+        if gdb_country_info:
+            deaths_all = gdb_country_info['Deaths.Number']
+            # Subtract away other types of death so we just get communicable disease deaths
+            deaths = (float(deaths_all['Communicable, maternal, neonatal, and nutritional diseases']['val']) -
+                float(deaths_all['Maternal disorders']['val']) -
+                float(deaths_all['Neonatal disorders']['val']) -
+                float(deaths_all['Nutritional deficiencies']['val']))
         country_feature['properties'] = {
             'ISO2': country_feature['properties']['iso_a2'],
-            'name': country_feature['properties']['name'],
-            'population': country_feature['properties']['pop_est']
+            'name': country_name,
+            'population': country_feature['properties']['pop_est'],
+            'deaths': deaths
         }
         out_features.append(country_feature)
     world['features'] = out_features
