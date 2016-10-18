@@ -5,7 +5,15 @@ import json
 with open("world-med-orig.geo.json") as f:
     world = json.load(f)
     out_features = []
+    ISO2set = set()
     for country_feature in world['features']:
+        ISO2 = country_feature['properties']['iso_a2']
+        if ISO2 == "-99":
+            # For countries without an ISO2 code use their name instead
+            ISO2 = "NoISO2:" + country_feature['properties']['name']
+        # Ensure ISO2 is unique
+        assert ISO2 not in ISO2set
+        ISO2set.add(ISO2)
         country_feature['properties'] = {
             'ISO2': country_feature['properties']['iso_a2'],
             'name': country_feature['properties']['name'],
