@@ -64,3 +64,18 @@ template(name='legend')
       .value
         .value--key(style="background:#{color}")
         .value--value #{value}
+
+template(name='infoBox')
+  if props
+    .active
+      h2= countryData.name
+      ul.list-unstyled
+        if countryData.mentions
+          li
+            span Mentions:
+            | {{addCommas countryData.mentions}}
+        li
+          span Population:
+          | {{addCommas countryData.population}}
+  else
+    p Hover over a country to view its number of mentions and population.

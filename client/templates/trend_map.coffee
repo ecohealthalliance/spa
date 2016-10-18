@@ -64,20 +64,10 @@ Template.trendMap.onRendered ->
     @update()
     @_div
   info.update = (props) ->
-    if props
-      L.DomUtil.addClass(@_div, 'active')
-      countryData = aggregatedCountryData[props.ISO2]
-      @_div.innerHTML = """
-      <h2>#{countryData.name}</h2>
-      <ul class='list-unstyled'>
-        <li><span>Population:</span> #{utils.addCommas(countryData.population)}</li>
-      </ul>
-      """
-    else
-      L.DomUtil.removeClass(@_div, 'active')
-      @_div.innerHTML = """
-      <p>Hover over a country to view its number of mentions and population.</p>
-      """
+    @_div.innerHTML = Blaze.toHTMLWithData(Template.infoBox, {
+      props: props
+      countryData: if props?.ISO2 then aggregatedCountryData[props.ISO2]
+    })
   info.addTo(@lMap)
   countryLayers = []
   @geoJsonLayer = L.geoJson({

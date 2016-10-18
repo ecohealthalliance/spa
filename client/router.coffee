@@ -7,6 +7,12 @@ FlowRouter.route '/',
     BlazeLayout.render 'layout',
       main: 'blindspotMap'
 
+FlowRouter.route '/gbd',
+  name: 'globalBurdenOfDisease'
+  action: ->
+    BlazeLayout.render 'layout',
+      main: 'blindspotMap'
+
 FlowRouter.route '/trending',
   name: 'trending'
   action: ->

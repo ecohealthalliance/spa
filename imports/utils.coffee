@@ -14,5 +14,7 @@ module.exports =
     d.setMinutes(59)
     d.setSeconds(59)
     d
-  addCommas: (num)=>
+  addCommas: (num)->
     num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
+UI.registerHelper 'addCommas', module.exports.addCommas

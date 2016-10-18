@@ -2,8 +2,6 @@ Feeds = require '/imports/data/feeds.coffee'
 WorldGeoJSON = require '/imports/data/world.geo.json'
 utils = require '/imports/utils.coffee'
 
-COLOR_CONSTANT = 20000000000000000
-
 Template.blindspotMap.onCreated ->
   @aggregatedCountryDataRV = new ReactiveVar {}
   @sideBarLeftOpen = new ReactiveVar true
@@ -62,9 +60,9 @@ Template.blindspotMap.onRendered ->
     $(@_div).html(
       Blaze.toHTMLWithData(Template.legend, {
         values: _.range(0, ramp.length, 2).map (idx)->
-          value: utils.round((Math.exp(idx / ramp.length) - 1) * 1000000 * (
-            1000 * 60 * 60 * 24 * 365 # 1 year in milliseconds
-          ) / COLOR_CONSTANT, 2)
+          value: utils.round(
+            (idx / ramp.length) * medianValue * 1000000 / 0.5
+          , 2)
           color: ramp[idx]
       })
     )
@@ -80,18 +78,18 @@ Template.blindspotMap.onRendered ->
     # If the value exceeds one the last stop is used.
     ramp[Math.floor(ramp.length * Math.max(0, Math.min(val, 0.99)))]
   style = (feature)=>
-    fillColor: getColor(
-      Math.log(
-        1 + COLOR_CONSTANT * (aggregatedCountryData[feature.properties.ISO2]?.mentionsPerCapita) / (
-          (Session.get('endDate') - Session.get('startDate'))
-        )
-      )
-    )
-    weight: 1
-    opacity: 1
-    color: '#DDDDDD'
-    dashArray: '3'
-    fillOpacity: 0.75
+    if FlowRouter.getRouteName() == "globalBurdenOfDisease"
+      x = aggregatedCountryData[feature.properties.ISO2]?.mentionsPerDeathPerYear
+    else
+      x = aggregatedCountryData[feature.properties.ISO2]?.mentionsPerCapitaPerYear
+    return {
+      fillColor: getColor(x * 0.5 / medianValue)
+      weight: 1
+      opacity: 1
+      color: '#DDDDDD'
+      dashArray: '3'
+      fillOpacity: 0.75
+    }
   zoomToFeature = (e)=>
     @lMap.fitBounds(e.target.getBounds())
   highlightFeature = (e)=>
@@ -113,27 +111,16 @@ Template.blindspotMap.onRendered ->
     @update()
     @_div
   info.update = (props) ->
-    if props
-      L.DomUtil.addClass(@_div, 'active')
-      countryData = aggregatedCountryData[props.ISO2]
-      @_div.innerHTML = """
-      <h2>#{utils.addCommas(countryData.name)}</h2>
-      <ul class='list-unstyled'>
-        <li><span>Mentions:</span> #{utils.addCommas(countryData.mentions)}</li>
-        <li><span>Population:</span> #{utils.addCommas(countryData.population)}</li>
-      </ul>
-      """
-    else
-      L.DomUtil.removeClass(@_div, 'active')
-      @_div.innerHTML = """
-      <p>Hover over a country to view its number of mentions and population.</p>
-      """
+    @_div.innerHTML = Blaze.toHTMLWithData(Template.infoBox, {
+      props: props
+      countryData: if props?.ISO2 then aggregatedCountryData[props.ISO2]
+    })
   info.addTo(@lMap)
   countryLayers = []
   @geoJsonLayer = L.geoJson({
-      features: geoJsonFeatures
-      type: "FeatureCollection"
-    }, {
+    features: geoJsonFeatures
+    type: "FeatureCollection"
+  }, {
     style: style
     onEachFeature: (feature, layer)->
       countryLayers.push(layer)
@@ -144,11 +131,13 @@ Template.blindspotMap.onRendered ->
   }).addTo(@lMap)
 
   updateMap = =>
+    legend.update()
     countryLayers.forEach (layer)=>
       @geoJsonLayer.resetStyle(layer)
     unless _.isEmpty(aggregatedCountryData)
       @mapLoading.set false
-
+  summaryStats = {}
+  medianValue = null
   @autorun =>
     args =
       startDate: Session.get('startDate')
@@ -162,26 +151,48 @@ Template.blindspotMap.onRendered ->
     Meteor.call('aggregateMentionsOverDateRange', args, (err, mentionsByCountry)=>
       if err
         throw err
-      groupedCountryData = _.chain(geoJsonFeatures)
+      aggregatedCountryData = {}
+      aggregatedCountryData = _.chain(geoJsonFeatures)
         .map((feature)->
           {properties: {ISO2, population, name}} = feature
           mentions = mentionsByCountry[ISO2] or 0
-          {
+          YEAR_IN_MILLIS = 1000 * 60 * 60 * 24 * 365
+          timeIntervalYears = (
+            Session.get('endDate') - Session.get('startDate')
+          ) / YEAR_IN_MILLIS
+          return {
             name: name
             ISO2: ISO2
             population: population
             mentions: mentions
             mentionsPerCapita: mentions / population
+            mentionsPerCapitaPerYear: (mentions / population) / timeIntervalYears
+            mentionsPerDeathPerYear: null #TODO
           }
         )
         .groupBy("ISO2")
         .value()
-      aggregatedCountryData = {}
-      for ISO2, features of groupedCountryData
+
+      for ISO2, features of aggregatedCountryData
         aggregatedCountryData[ISO2] = features[0]
       @aggregatedCountryDataRV.set aggregatedCountryData
-      updateMap()
     )
+  @autorun =>
+    # Run on route name change
+    if FlowRouter.getRouteName() == "globalBurdenOfDisease"
+      pluckProp = 'mentionsPerDeathPerYear'
+    else
+      pluckProp = 'mentionsPerCapitaPerYear'
+    routeName = FlowRouter.getRouteName()
+    aggregatedCountryData = @aggregatedCountryDataRV.get()
+    if not _.isEmpty(aggregatedCountryData)
+      values = _.chain(aggregatedCountryData)
+        .values(aggregatedCountryData)
+        .pluck(pluckProp)
+        .value()
+        .sort()
+      medianValue = values[Math.floor(values.length/2)]
+      updateMap()
 
 Template.blindspotMap.helpers
   minDate: ->
