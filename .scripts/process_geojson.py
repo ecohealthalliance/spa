@@ -4,6 +4,14 @@
 import json
 import csv
 import difflib
+COUNTRY_NAME_REMAPPINGS = {
+    "Dem. Rep. Congo": "Democratic Republic of the Congo",
+    "Korea": "South Korea",
+    "Dem. Rep. Korea": "North Korea",
+    "Lao PDR": "Laos",
+    "Eq. Guinea": "Equatorial Guinea",
+    "Aland": None
+}
 gdb_data = {}
 with open("IHME-GBD_2015_DATA.csv") as f:
     reader = csv.DictReader(f)
@@ -26,9 +34,10 @@ with open("world-med-orig.geo.json") as f:
         assert ISO2 not in ISO2set
         ISO2set.add(ISO2)
         country_name = country_feature['properties']['name']
-        #print country_name
+        country_name = COUNTRY_NAME_REMAPPINGS.get(country_name, country_name)
+        print country_name
         gdb_country_info = gdb_data.get(country_name)
-        if gdb_country_info is None:
+        if gdb_country_info is None and country_name:
             max_size = 0
             for key, value in gdb_data.items():
                 seqm = difflib.SequenceMatcher(None, key, country_name)
@@ -36,7 +45,8 @@ with open("world-med-orig.geo.json") as f:
                 if size > max_size and seqm.ratio() > 0.7:
                     max_size = size
                     gdb_country_info = value
-            #print gdb_country_info
+            if gdb_country_info:
+                print "  >", gdb_country_info['Deaths.Number']['Communicable, maternal, neonatal, and nutritional diseases']['location_name']
         deaths = None
         if gdb_country_info:
             deaths_all = gdb_country_info['Deaths.Number']

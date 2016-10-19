@@ -20,14 +20,8 @@ template(name='blindspotMap')
           p
             | This map shows statisitics about how often each country is
             | mentioned on ProMED-mail to indicate areas in need of increased reporting.
-            | Mentions are determined by a toponym resolution algorithm that counts a mention of any location within a country as a mention of that country.
-          p Data on deaths from communicable disease comes from the Global Burden of Disease dataset available
-            a(href="http://ghdx.healthdata.org/gbd-results-tool") here
-          a(href="/") Mentions per capita
-          br
-          a(href="/gbd") Mentions per death from communicable disease
-          br
-          a(href="/trending") Trending countries
+            a(href="#" data-toggle="modal" data-target="#myModal") More info
+          +pageSelector
           .control-wrapper
             .heading
               h3 Date Range
@@ -63,6 +57,33 @@ template(name='blindspotMap')
     .sidebar-content
       #sidebar-table.sidebar-pane
         +spaTable aggregatedCountryData=aggregatedCountryData
+  .modal.fade(tabindex="-1" role="dialog" id="myModal")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span &times;
+        .modal-body
+          h4 How are mentions counted?
+          p
+            | Mentions are determined by a toponym resolution algorithm that
+            | counts a mention of any location within a country as a mention of that country.
+            | Geonames.org data is used to identify the names of countries within each document
+            | then culling is applied to disambiguate locations and remove false matches.
+          h4 Where does data on deaths from communicable disease come from?
+          p 
+            | Data on deaths from communicable disease comes from the IHME's Global Burden of Disease dataset available
+            a(href="http://ghdx.healthdata.org/gbd-results-tool") here.
+            | Communicable disease data is obtained by subtracting the 
+            | (A.4) Maternal Disease, (A.5) Neonatal Disease, and (A.6) Nutritional Deficiencies 
+            | values from the (A) Communicable, Maternal, Neonatal, and Nutritional Diseases values.
+          h5 Full Global Burden of Disease Study Citation
+          pre
+            | Global Burden of Disease Study 2015 (GBD 2015) Results.
+            | Seattle, United States: Institute for Health Metrics and Evaluation (IHME), 2016.
+            | Available from http://ghdx.healthdata.org/gbd-results-tool.
+            | For terms and conditions of use, please visit http://www.healthdata.org/about/terms-and-conditions
+
 
 template(name='legend')
   h4 Mentions per million {{units}} per year
@@ -85,7 +106,10 @@ template(name='infoBox')
           span Population:
           | {{addCommas countryData.population}}
         li
-          span Communicable Disease Deaths in 2015:
-          | {{addCommas countryData.deathsPerYear}}
+          span 2015 Communicable Disease Deaths:
+          if countryData.deathsPerYear
+            | {{addCommas countryData.deathsPerYear}}
+          else
+            | Unknown
   else
     p Hover over a country to view its number of mentions and population.

@@ -1,0 +1,5 @@
+template(name="pageSelector")
+  ul.nav.nav-tabs.nav-stacked
+    each pages
+      li(class="{{#if active}}active{{/if}}")
+        a(href="{{path}}")= label
