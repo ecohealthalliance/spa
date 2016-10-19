@@ -16,12 +16,21 @@ Template.spaTable.helpers
   endDate: ->
     Session.get('endDate').toLocaleDateString()
   cells: ->
-    [
-      { name: 'name', title: "Country" },
-      { name: 'mentions', title: "Mentions" },
+    cells = [
+      { name: 'name', title: "Country" }
+      { name: 'mentions', title: "Mentions" }
       { name: 'population', title: "Population" }
-      { name: 'mentionsPerCapita', title: "Mentions per capita" },
     ]
+    if FlowRouter.getRouteName() == "globalBurdenOfDisease"
+      cells.concat(
+        name: 'mentionsPerDeathPerYear'
+        title: "Mentions per death per year"
+      )
+    else
+      cells.concat(
+        name: 'mentionsPerCapitaPerYear'
+        title: "Mentions per capita per year"
+      )
   data: ->
     instance = Template.instance()
     _sort = {}
@@ -34,7 +43,8 @@ Template.spaTable.helpers
       else
        return value * instance.sortOrder.get()
     )
-
+  getField: (data)->
+    data[@name]
   ready: ->
     Template.instance().ready.get()
 
