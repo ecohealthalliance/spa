@@ -17,11 +17,11 @@ template(name='blindspotMap')
       .sidebar-pane.active
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
+          +pageSelector
           p
             | This map shows statisitics about how often each country is
             | mentioned on ProMED-mail to indicate areas in need of increased reporting.
             a(href="#" data-toggle="modal" data-target="#myModal") More info
-          +pageSelector
           .control-wrapper
             .heading
               h3 Date Range
@@ -71,11 +71,11 @@ template(name='blindspotMap')
             | Geonames.org data is used to identify the names of countries within each document
             | then culling is applied to disambiguate locations and remove false matches.
           h4 Where does data on deaths from communicable disease come from?
-          p 
+          p
             | Data on deaths from communicable disease comes from the IHME's Global Burden of Disease dataset available
             a(href="http://ghdx.healthdata.org/gbd-results-tool") here.
-            | Communicable disease data is obtained by subtracting the 
-            | (A.4) Maternal Disease, (A.5) Neonatal Disease, and (A.6) Nutritional Deficiencies 
+            | Communicable disease data is obtained by subtracting the
+            | (A.4) Maternal Disease, (A.5) Neonatal Disease, and (A.6) Nutritional Deficiencies
             | values from the (A) Communicable, Maternal, Neonatal, and Nutritional Diseases values.
           h5 Full Global Burden of Disease Study Citation
           pre

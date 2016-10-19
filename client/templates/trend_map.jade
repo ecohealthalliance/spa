@@ -1,10 +1,7 @@
 template(name='trendMap')
   #blindspot-map.map
-    .loading(class="{{#unless loading}} hiddenLoader {{/unless}}")
-      .loading-content
-        if loading
-          i.loading-spinner
-          h1.loading-text Loading
+    if loading
+      +loadingDialog
 
   #sidebar.sidebar.sidebar-left.sidebar-main
     // Nav tabs

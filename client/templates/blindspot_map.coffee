@@ -12,6 +12,7 @@ Template.blindspotMap.onCreated ->
   # The interval dates set the start and end of the time slider's min/max range.
   @intervalStartDate = new ReactiveVar new Date()
   @intervalEndDate = new ReactiveVar new Date()
+
   Meteor.call 'getPostsDateRange', (err, [startDate, endDate])=>
     console.log("Most recent article date:", endDate)
     startDate = utils.truncateDateToStart(startDate)
@@ -22,10 +23,12 @@ Template.blindspotMap.onCreated ->
     @intervalEndDate.set endDate
     Session.set 'startDate', startDate
     Session.set 'endDate', endDate
+
   # When the interval dates change reset the start/end dates to the full interval.
   @autorun =>
     Session.set 'startDate', @intervalStartDate.get()
     Session.set 'endDate', @intervalEndDate.get()
+
 Template.blindspotMap.onRendered ->
   @autorun =>
     [minDate, maxDate] = [@minDate.get(), @maxDate.get()]
@@ -44,6 +47,7 @@ Template.blindspotMap.onRendered ->
       minDate: minDate
       maxDate: maxDate
     )
+
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
   @lMap = L.map("blindspot-map",
     zoomControl: false
@@ -74,10 +78,12 @@ Template.blindspotMap.onRendered ->
   tableSidebar = L.control.sidebar('tableSidebar').addTo(@lMap)
   geoJsonFeatures = WorldGeoJSON.features
   aggregatedCountryData = {}
+
   getColor = (val)->
     # return a color from the ramp based on a 0 to 1 value.
     # If the value exceeds one the last stop is used.
     ramp[Math.floor(ramp.length * Math.max(0, Math.min(val, 0.99)))]
+
   style = (feature)=>
     if FlowRouter.getRouteName() == "globalBurdenOfDisease"
       x = aggregatedCountryData[feature.properties.ISO2]?.mentionsPerDeathPerYear
@@ -91,8 +97,10 @@ Template.blindspotMap.onRendered ->
       dashArray: '3'
       fillOpacity: 0.75
     }
+
   zoomToFeature = (e)=>
     @lMap.fitBounds(e.target.getBounds())
+
   highlightFeature = (e)=>
     layer = e.target
     layer.setStyle
@@ -103,9 +111,11 @@ Template.blindspotMap.onRendered ->
     if not L.Browser.ie and not L.Browser.opera
       layer.bringToFront()
     info.update(layer.feature.properties)
+
   resetHighlight = (e)=>
     @geoJsonLayer.resetStyle(e.target)
     info.update()
+
   info = L.control(position: 'topleft')
   info.onAdd = (map) ->
     @_div = L.DomUtil.create('div', 'info')
@@ -137,6 +147,7 @@ Template.blindspotMap.onRendered ->
       @geoJsonLayer.resetStyle(layer)
     unless _.isEmpty(aggregatedCountryData)
       @mapLoading.set false
+
   summaryStats = {}
   medianValue = null
   @autorun =>
@@ -180,6 +191,7 @@ Template.blindspotMap.onRendered ->
         aggregatedCountryData[ISO2] = features[0]
       @aggregatedCountryDataRV.set aggregatedCountryData
     )
+
   @autorun =>
     # Run on route name change
     if FlowRouter.getRouteName() == "globalBurdenOfDisease"
@@ -200,47 +212,63 @@ Template.blindspotMap.onRendered ->
 Template.blindspotMap.helpers
   minDate: ->
     Template.instance().minDate.get()?.toLocaleDateString()
+
   maxDate: ->
     Template.instance().maxDate.get()?.toLocaleDateString()
+
   intervalStartDate: ->
     Template.instance().intervalStartDate
+
   intervalEndDate: ->
     Template.instance().intervalEndDate
+
   formattedIntervalStartDate: ->
     moment(Template.instance().intervalStartDate.get()).format("MM/DD/YYYY")
+
   formattedIntervalEndDate: ->
     moment(Template.instance().intervalEndDate.get()).format("MM/DD/YYYY")
+
   intervalGreaterThanOneDay: ->
     (Template.instance().intervalEndDate.get() - Template.instance().intervalStartDate.get()) > 1000 * 60 * 60 * 24
+
   startDate: ->
     Session.get('startDate').toLocaleDateString()
+
   endDate: ->
     Session.get('endDate').toLocaleDateString()
+
   loading: ->
     Template.instance().mapLoading.get()
+
   aggregatedCountryData: ->
     Template.instance().aggregatedCountryDataRV
 
 Template.blindspotMap.events
   'click #sidebar-plus-button': (event, instance) ->
     instance.lMap.zoomIn()
+
   'click #sidebar-minus-button': (event, instance) ->
     instance.lMap.zoomOut()
+
   'update #slider': _.debounce((evt, instance)->
     range = $(evt.target)[0].noUiSlider.get()
     Session.set('startDate', utils.truncateDateToStart(new Date(parseFloat(range[0]))))
     Session.set('endDate', utils.truncateDateToEnd(new Date(parseFloat(range[1]))))
   , 200)
+
   'dp.change #intervalStartDate': (event, instance)->
     d = $(event.target).data('DateTimePicker')?.date().toDate()
     if d then instance.intervalStartDate.set utils.truncateDateToStart(d)
+
   'dp.change #intervalEndDate': (event, instance)->
     d = $(event.target).data('DateTimePicker')?.date().toDate()
     if d then instance.intervalEndDate.set utils.truncateDateToEnd(d)
+
   'click #sidebar-collapse-tab': (event, instance) ->
     sideBarLeftOpen = instance.sideBarLeftOpen.get()
     $('body').toggleClass('sidebar-left-closed')
     instance.sideBarOpen.set not sideBarOpen
+
   'click #sidebar-table-tab': (event, instance) ->
     sideBarRightOpen = instance.sideBarRightOpen.get()
     $('body').toggleClass('sidebar-right-closed')

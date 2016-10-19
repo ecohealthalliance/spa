@@ -28,6 +28,7 @@ Template.trendMap.onRendered ->
     # If the value exceeds one the last stop is used.
     ramp[Math.floor(ramp.length * Math.max(0, Math.min(val, 0.99)))]
   style = (feature)=>
+
     normalizedScore = 0.5
     score = aggregatedCountryData[feature.properties.ISO2]?.scorePerCapita
     [minVal, maxVal] = @valRange.get()
@@ -43,8 +44,10 @@ Template.trendMap.onRendered ->
       dashArray: '3'
       fillOpacity: 0.75
     }
+
   zoomToFeature = (e)=>
     @lMap.fitBounds(e.target.getBounds())
+
   highlightFeature = (e)=>
     layer = e.target
     layer.setStyle
@@ -55,6 +58,7 @@ Template.trendMap.onRendered ->
     if not L.Browser.ie and not L.Browser.opera
       layer.bringToFront()
     info.update(layer.feature.properties)
+
   resetHighlight = (e)=>
     @geoJsonLayer.resetStyle(e.target)
     info.update()
