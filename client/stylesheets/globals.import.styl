@@ -1,51 +1,3 @@
-.sidebar-footer
-  background alpha($l-gray, 95%)
-  border-top 3px solid $border-gray
-
-.loading
-  overlay(white, .75)
-  z-index 1100
-  transition .2s
-  opacity 1
-
-  &.hiddenLoader
-    z-index -1
-    opacity 0
-    .loading-content
-      opacity 0
-
-  .loading-content
-    position absolute
-    top 45%
-    right 50%
-    transform translate(0, -50%)
-    opacity 1
-    transition .2s
-
-  .loading-text
-    color $primary-transparent
-    font-size 2em
-    text-align center
-    font-family 'Lato'
-    font-weight 200
-    text-transform uppercase
-
-  .loading-spinner
-    margin 0 auto 10px auto
-    display block
-    animate(3s)
-    background url(/images/spinner.svg)
-    font-size 3em
-    height 100px
-    width 100px
-
-  &.small
-    .loading-spinner
-      height 75px
-      width 75px
-    .loading-text
-      font-size 1.5em
-
 .empty
   td
     text-align center
@@ -53,9 +5,7 @@
   &::before
     display none
 
-for $num in -1 0 1 2 3
-  .space-btm-{$num}
-    margin-bottom $num*10px
-
-  .space-top-{$num}
-    margin-top $num*10px
+blockquote
+  font-size 1em
+  margin-bottom 0
+  border-color lighten($primary-light, 80%)

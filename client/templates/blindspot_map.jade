@@ -62,29 +62,30 @@ template(name='blindspotMap')
   .modal.fade(tabindex="-1" role="dialog" id="myModal")
     .modal-dialog
       .modal-content
-        .modal-header
-          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
-            span &times;
+        .close-modal(data-dismiss="modal" aria-label="Close")
         .modal-body
-          h4 How are mentions counted?
-          p
-            | Mentions are determined by a toponym resolution algorithm that
-            | counts a mention of any location within a country as a mention of that country.
-            | Geonames.org data is used to identify the names of countries within each document
-            | then culling is applied to disambiguate locations and remove false matches.
-          h4 Where does data on deaths from communicable disease come from?
-          p
-            | Data on deaths from communicable disease comes from the IHME's Global Burden of Disease dataset available
-            a(href="http://ghdx.healthdata.org/gbd-results-tool") here.
-            | Communicable disease data is obtained by subtracting the
-            | (A.4) Maternal Disease, (A.5) Neonatal Disease, and (A.6) Nutritional Deficiencies
-            | values from the (A) Communicable, Maternal, Neonatal, and Nutritional Diseases values.
-          h5 Full Global Burden of Disease Study Citation
-          pre
-            | Global Burden of Disease Study 2015 (GBD 2015) Results.
-            | Seattle, United States: Institute for Health Metrics and Evaluation (IHME), 2016.
-            | Available from http://ghdx.healthdata.org/gbd-results-tool.
-            | For terms and conditions of use, please visit http://www.healthdata.org/about/terms-and-conditions
+          section
+            h4 How are mentions counted?
+            p
+              | Mentions are determined by a toponym resolution algorithm that
+              | counts a mention of any location within a country as a mention of that country.
+              | Geonames.org data is used to identify the names of countries within each document
+              | then culling is applied to disambiguate locations and remove false matches.
+          section
+            h4 Where does data on deaths from communicable disease come from?
+            p
+              | Data on deaths from communicable disease comes from the IHME's Global Burden of Disease dataset available
+              | #[a(href="http://ghdx.healthdata.org/gbd-results-tool") here].
+              | Communicable disease data is obtained by subtracting the
+              | (A.4) Maternal Disease, (A.5) Neonatal Disease, and (A.6) Nutritional Deficiencies
+              | values from the (A) Communicable, Maternal, Neonatal, and Nutritional Diseases values.
+          section
+            h5 Full Global Burden of Disease Study Citation
+            blockquote
+              | Global Burden of Disease Study 2015 (GBD 2015) Results.
+              | Seattle, United States: Institute for Health Metrics and Evaluation (IHME), 2016.
+              | Available from http://ghdx.healthdata.org/gbd-results-tool.
+              | For terms and conditions of use, please visit http://www.healthdata.org/about/terms-and-conditions
 
 
 template(name='legend')

@@ -1,0 +1,58 @@
+$modal-border-radius = 4px
+
+.modal-content
+  border-radius $modal-border-radius
+
+.modal-body
+  padding 25px
+  section
+    margin-bottom 20px
+    &:last-of-type
+      margin 0
+  h4
+    margin-bottom 5px
+  h5
+    margin-bottom 10px
+  h4
+  h5
+    font-weight bold
+    color $primary-dark
+
+.modal-header
+  padding 0
+  border-top-left-radius $modal-border-radius
+  border-top-right-radius $modal-border-radius
+  overflow hidden
+  background $ll-gray
+  .close
+    padding 5px
+
+.modal-title
+  padding .35em .75em .4em .75em
+  text-transform uppercase
+  font-weight 300
+  font-size 2em
+  color $primary
+
+.modal-header
+.modal-footer
+  border-color lighten($l-gray, 10%)
+
+.modal-footer
+  padding-top 1.25em
+  padding-bottom 2em
+
+.close-modal
+  position absolute
+  right .75em
+  top .5em
+  z-index 1
+  cursor pointer
+  color $m-gray
+  padding .25em
+  &:hover
+    color $primary
+  &::before
+    font-family FontAwesome
+    content '\f057'
+    font-size 1.65em
