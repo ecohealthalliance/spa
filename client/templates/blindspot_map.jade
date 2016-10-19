@@ -18,6 +18,8 @@ template(name='blindspotMap')
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
           +pageSelector
+          if additionalInfo
+            .additional-info Deaths from communicable disease
           p
             | This map shows statisitics about how often each country is
             | mentioned on ProMED-mail to indicate areas in need of increased reporting.

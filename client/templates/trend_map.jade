@@ -17,17 +17,17 @@ template(name='trendMap')
       .sidebar-pane.active
         h1.logo Surveillance Paucity Analysis
         .sidebar-pane-content
+          +pageSelector
           p
             | This map shows the trending countries on ProMED-mail feeds.
             | Countries with a relatively large increase in mentions per capita
             | are shown in green, while countries with a large decrease are shown
             | in red.
-          +pageSelector
           .control-wrapper
             .heading
               h3 Time interval
-            select#trendingRange.form-control
-              option(value="week" selected) Week
-              option(value="month") Month
-              option(value="year") Year
+            ul#trendingRange.range-selector.list-unstyled
+              li(data-time="week" class="{{#if rangeSelected 'week'}} active {{/if}}") Week
+              li(data-time="month" class="{{#if rangeSelected 'month'}} active {{/if}}") Month
+              li(data-time="year" class="{{#if rangeSelected 'year'}} active {{/if}}") Year
           +feeds

@@ -243,6 +243,10 @@ Template.blindspotMap.helpers
   aggregatedCountryData: ->
     Template.instance().aggregatedCountryDataRV
 
+  additionalInfo: ->
+    FlowRouter.watchPathChange()
+    FlowRouter.current().path is '/gbd'
+
 Template.blindspotMap.events
   'click #sidebar-plus-button': (event, instance) ->
     instance.lMap.zoomIn()

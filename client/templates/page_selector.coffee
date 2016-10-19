@@ -3,11 +3,13 @@ Template.pageSelector.helpers
     FlowRouter.watchPathChange()
     [
       {
-        label: "Mentions per capita"
+        label: "Mentions"
+        subLabel: "per capita"
         path: "/"
       }
       {
-        label: "Mentions per death from communicable disease"
+        label: "Mentions"
+        subLabel: "per death"
         path: "/gbd"
       }
       {

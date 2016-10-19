@@ -27,8 +27,8 @@ Template.trendMap.onRendered ->
     # return a color from the ramp based on a 0 to 1 value.
     # If the value exceeds one the last stop is used.
     ramp[Math.floor(ramp.length * Math.max(0, Math.min(val, 0.99)))]
-  style = (feature)=>
 
+  style = (feature)=>
     normalizedScore = 0.5
     score = aggregatedCountryData[feature.properties.ISO2]?.scorePerCapita
     [minVal, maxVal] = @valRange.get()
@@ -136,6 +136,10 @@ Template.trendMap.helpers
   loading: ->
     Template.instance().mapLoading.get()
 
+  rangeSelected: (range) ->
+    range is Template.instance().trendingRange.get()
+
+
 Template.trendMap.events
   'click #sidebar-plus-button': (event, instance) ->
     instance.lMap.zoomIn()
@@ -145,5 +149,5 @@ Template.trendMap.events
     sideBarLeftOpen = instance.sideBarLeftOpen.get()
     $('body').toggleClass('sidebar-left-closed')
     instance.sideBarOpen.set not sideBarOpen
-  'change #trendingRange': (event, template) ->
-    template.trendingRange.set($("#trendingRange").val())
+  'click #trendingRange li': (event, template) ->
+    template.trendingRange.set($(event.target).data('time'))
