@@ -4,12 +4,11 @@ $primary-font = 'Lato'
 $body-text = #333333
 $tab-unselected = rgba(102, 102, 102, 1)
 
-$blue = rgb(114, 109, 151)
-$blue-transparent = alpha($blue, 85%)
-$primary = desaturate(rgba(78, 68, 165, 1), 60%)
-$secondary = rgba(216, 153, 111, 1)
-$active = rgba(149, 228, 140, 1)
+$primary = rgb(114, 109, 151)
+$primary-light = lighten($primary, 20%)
+$primary-dark = darken($primary, 20%)
 $primary-transparent = alpha($primary, 85%)
+$secondary = rgba(216, 153, 111, 1)
 $active = rgba(53, 185, 118, 1)
 $whiteBG = alpha(#FFFFFF, 90%)
 
@@ -21,7 +20,7 @@ $m-gray = rgba(204, 204, 204, 1)
 $d-gray = rgba(150, 150, 150, 1)
 $dd-gray = rgba(100, 100, 100, 1)
 
-$sidebar-width = 300px
+$sidebar-width = 350px
 $sidebar-tabs-width = 60px
 $sidebar-full-width = $sidebar-width + $sidebar-tabs-width
 $data-table-width = 550px

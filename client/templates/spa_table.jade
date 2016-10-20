@@ -14,12 +14,10 @@ template(name="spaTable")
                     .tablesorter-header-inner= title
             tbody(aria-live="polite" aria-relevant="all")
               if data
-                each data
+                each item in data
                   tr
-                    td= name
-                    td= mentions
-                    td= population
-                    td= mentionsPerCapita
+                    each cells
+                      td {{getField item name}}
               else
                 tr.row.empty
                   td(colspan="4")

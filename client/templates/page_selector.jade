@@ -1,0 +1,9 @@
+template(name="pageSelector")
+  ul.tabs.list-unstyled
+    each pages
+      li.tab(class="{{#if active}}active{{/if}}")
+        a(href="{{path}}")
+          span
+            span.tab--label= label
+            if subLabel
+              span.tab--sub-label= subLabel

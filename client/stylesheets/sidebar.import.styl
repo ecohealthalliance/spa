@@ -1,5 +1,9 @@
+#sidebar
+  overflow visible
+
 .sidebar
   box-shadow none
+  width $sidebar-width + $sidebar-tabs-width
   h1.logo
     width 85%
     margin 20px auto
@@ -61,5 +65,62 @@
   background $primary-transparent
   opacity .75
 
-#sidebar
-  overflow visible
+.sidebar-footer
+  background alpha($l-gray, 95%)
+  border-top 3px solid $border-gray
+
+.tabs
+  display flex
+  align-items stretch
+  justify-content space-around
+  margin 0 -35px 20px -35px
+  border-top 2px solid $primary
+  border-bottom 2px solid $primary
+  li
+    flex 1
+    display flex
+    align-items center
+    margin 0
+    text-align center
+    border-right 1px solid $primary
+    &:hover
+    &:focus
+      background lighten($primary, 90%)
+    &:last-of-type
+      border 0
+    &.active
+      background $primary
+      a
+        color white
+        &:hover
+        &:focus
+          background $primary
+  a
+    flex 1
+    margin 0
+    color $body-text
+    padding 1em
+    &:focus
+    &:hover
+      box-shadow none
+      outline 0
+      background lighten($primary, 90%)
+      text-decoration none
+  span
+    letter-spacing .03em
+  .tab--label
+    font-weight bold
+    font-size 1em
+  .tab--sub-label
+    display block
+    font-size .85em
+
+.additional-info
+  background lighten($primary-light, 90%)
+  color $primary-dark
+  padding .5em 1em
+  margin -20px -35px 0 -35px
+  text-align center
+  font-size .85em
+  margin-bottom 20px
+  letter-spacing .03em

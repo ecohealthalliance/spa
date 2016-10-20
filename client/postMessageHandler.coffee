@@ -11,6 +11,8 @@ postMessageHandler = (event)->
       title = "ProMED-mail mentions per capita"
     else if url.match(/trend/)
       title = "ProMED-mail Trending Countries"
+    else if url.match(/gbd/)
+      title = "ProMED-mail mentions per death from communicable disease"
     console.log "screenCapture starting..."
     canvas = document.querySelector('canvas')
     tempCanvas = document.createElement("canvas")

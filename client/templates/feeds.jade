@@ -3,6 +3,7 @@ template(name='feeds')
     .heading
       h3 Feeds
     each feeds
-      .feed
-        input(type="checkbox" checked=checked)
-        span=label
+      .feed.checkbox
+        label
+          input(type="checkbox" checked=checked)
+          span=label
