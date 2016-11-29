@@ -4,7 +4,7 @@ postMessageHandler = (event)->
     request = JSON.parse(event.data)
   catch
     return
-  if request.type == "screenCapture"
+  if request.type == "eha.dossierRequest"
     title = "SPA"
     url = window.location.toString()
     if window.location.pathname == "/"
@@ -27,10 +27,11 @@ postMessageHandler = (event)->
     )
     console.log "screenCapture done"
     window.parent.postMessage(JSON.stringify({
+      type: "eha.dossierTag"
       screenCapture: tempCanvas.toDataURL()
       url: url
       title: title
-    }), "*")
+    }), event.origin)
     tempCanvas.remove()
 
 window.addEventListener("message", postMessageHandler, false)
