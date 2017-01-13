@@ -2,8 +2,8 @@
   "name": "SPA",
   "private": true,
   "dependencies": {
-    "highcharts": "^4.2.7",
-    "apidoc": "0.16.1"
+    "apidoc": "0.16.1",
+    "highcharts": "^4.2.7"
   },
   "version": "0.0.1",
   "repository": {
