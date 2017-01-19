@@ -1,3 +1,6 @@
+fs = Npm.require('fs')
+path = Npm.require('path')
+
 Meteor.startup ->
   Posts._ensureIndex({ "subject.raw": "text" })
 
@@ -53,3 +56,13 @@ Picker.route '/api/v1/find', (params, request, response, next) ->
   response.statusCode = 200
   response.setHeader('Content-Type', 'application/json')
   response.end JSON.stringify posts
+
+Picker.route '/revision', (params, request, response, next) ->
+  fs.readFile path.join(process.env.PWD, 'revision.txt'), 'utf8', (err, data)=>
+    if err
+      console.log(err)
+      data = "Error getting revision. Check the server log for details."
+
+    response.statusCode = 200
+    response.end data
+
