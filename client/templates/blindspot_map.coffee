@@ -36,17 +36,16 @@ Template.blindspotMap.onRendered ->
     if not minDate then return
     @$('[data-toggle="tooltip"]').tooltip()
     @$('#intervalStartDate').data('DateTimePicker')?.destroy()
-    @$('#intervalStartDate').datetimepicker(
+    @$('#intervalStartDate').datetimepicker
       format: 'MM/DD/YYYY'
       minDate: minDate
       maxDate: maxDate
-    )
+
     @$('#intervalEndDate').data('DateTimePicker')?.destroy()
-    @$('#intervalEndDate').datetimepicker(
+    @$('#intervalEndDate').datetimepicker
       format: 'MM/DD/YYYY'
       minDate: minDate
       maxDate: maxDate
-    )
 
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images'
   @lMap = L.map("blindspot-map",
@@ -60,17 +59,14 @@ Template.blindspotMap.onRendered ->
   legend.onAdd = (map)->
     @_div = L.DomUtil.create('div', 'info legend')
     @update()
-  legend.update = ()->
-    $(@_div).html(
-      Blaze.toHTMLWithData(Template.legend, {
+  legend.update = () ->
+    $(@_div).html Blaze.toHTMLWithData(Template.legend,
         units: if FlowRouter.getRouteName() == "globalBurdenOfDisease" then "deaths" else "residents"
-        values: _.range(0, ramp.length, 2).map (idx)->
-          value: utils.round(
-            (idx / ramp.length) * medianValue * 1000000 / 0.5
-          , 2)
+        values: _.range(0, ramp.length, 2).map (idx) ->
+          value = utils.round((idx / ramp.length) * medianValue * 1000000 / 0.5, 2)
+          value: if not _.isNaN(value) then value else '--'
           color: ramp[idx]
-      })
-    )
+      )
     @_div
   legend.addTo(@lMap)
 
